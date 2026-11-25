@@ -1,0 +1,10 @@
+{
+  "name": "ال طارق",
+  "short_name": "ال طارق",
+  "description": "منصة تعليم اللغة العربية: نحو وصرف وبلاغة وإملاء وخط.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F2F5F7",
+  "theme_color": "#0E5E6F",
+  "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+}

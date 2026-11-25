@@ -1,0 +1,101 @@
+// Browser-only backend for the static demo (Firebase Hosting).
+// Runs the real Al Tareq server code (routes, services, migrations, seed) against
+// SQLite-in-WebAssembly and stores the database in this browser's localStorage.
+import { wrapSqlJs } from './db.js';
+import { migrate } from '../server/migrations/index.js';
+import { createApp } from '../server/app.js';
+import { seed } from '../server/seed.js';
+import { createLogger } from '../server/lib/log.js';
+
+const DB_KEY = 'altareq-demo-db-v2', SID_KEY = 'altareq-demo-sid', MAIL_KEY = 'altareq-demo-outbox';
+const store = {
+  get: k => { try { return localStorage.getItem(k); } catch { return null; } },
+  set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* full or blocked: the demo keeps working in memory */ } },
+};
+try { localStorage.removeItem('altareq-demo-db-v1'); } catch { /* blocked */ } // replaced by v2 (lesson notes for Nour)
+const toB64 = bytes => { let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(s); };
+const fromB64 = b64 => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+
+/** Console email provider whose outbox survives page loads, so emailed links can be opened. */
+function demoMailProvider() {
+  let outbox = [];
+  try { outbox = JSON.parse(store.get(MAIL_KEY)) || []; } catch { /* empty */ }
+  return {
+    name: 'console',
+    outbox,
+    async send(msg) {
+      outbox.unshift({ ...msg, id: Date.now() + Math.random(), sentAt: new Date().toISOString() });
+      outbox.length = Math.min(outbox.length, 20);
+      store.set(MAIL_KEY, JSON.stringify(outbox));
+    },
+  };
+}
+
+const ready = (async () => {
+  const SQL = await window.initSqlJs({ locateFile: f => `https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/${f}` });
+  const saved = store.get(DB_KEY);
+  let raw;
+  try { raw = saved ? new SQL.Database(fromB64(saved)) : new SQL.Database(); } catch { raw = new SQL.Database(); }
+  const db = wrapSqlJs(raw);
+  const log = createLogger({ level: 'warn', write: line => console.warn(line) });
+  migrate(db, log);
+  const config = {
+    production: false, demo: true, baseUrl: location.origin, seedDemo: true, logLevel: 'warn',
+    email: { provider: 'console', from: 'Al Tareq <hello@altareq.demo>', resendKey: '' },
+    payments: { provider: 'demo', paymob: { baseUrl: '', secretKey: '', publicKey: '', hmacSecret: '', integrationIds: [] } },
+    video: { bunnyLibraryId: '', bunnyTokenKey: '', ttl: 7200 },
+    // Nour runs on the demo provider: canned, clearly labelled replies built from the lesson text. No API key in the browser.
+    ai: {
+      provider: 'demo', apiKey: '', baseUrl: '', modelChat: 'claude-sonnet-5-5', modelFast: 'claude-haiku-4-5-20251001',
+      priceChat: [2, 10], priceFast: [1, 5], timeoutMs: 30000, retryDelayMs: 1500, demoDelayMs: 18, historyDays: 90,
+      dailyLimitFree: 15, dailyLimitPlus: 100, monthlyBudgetUsd: 50, maxInputChars: 1500, maxOutputTokens: 600, perMinute: 10,
+      experiment: false, search: 'auto',
+    },
+    coach: { inactiveDays: 3, minGapHours: 48, maxPerWeek: 3, quietStart: 22, quietEnd: 9 },
+    supportResources: '',
+  };
+  const app = createApp({ db, config, log, provider: demoMailProvider() });
+  seed(app.services);
+  let timer;
+  const persist = () => { clearTimeout(timer); timer = setTimeout(() => store.set(DB_KEY, toB64(db.export())), 250); };
+  // Scheduled jobs (reminders, coach, reports) run while the demo tab is open.
+  const tick = () => app.services.housekeeping.hourly().then(persist).catch(() => {});
+  setTimeout(tick, 1500);
+  setInterval(tick, 5 * 60_000);
+  persist();
+  return { app, persist };
+})();
+
+window.__altareqDemo = {
+  async request(method, path, body, headers) {
+    const { app, persist } = await ready;
+    const url = new URL(path, location.origin);
+    const sid = store.get(SID_KEY);
+    const lower = Object.fromEntries(Object.entries(headers).map(([k, v]) => [k.toLowerCase(), v]));
+    const res = await app.handle({
+      method, path: url.pathname, query: Object.fromEntries(url.searchParams), body,
+      headers: { ...lower, host: location.host }, cookies: sid ? { sid } : {}, ip: 'browser',
+    });
+    const cookie = res.headers['Set-Cookie'];
+    if (cookie) {
+      const m = /^sid=([^;]*);.*Max-Age=(\d+)/.exec(cookie);
+      if (m) store.set(SID_KEY, m[2] === '0' ? '' : m[1]);
+    }
+    if (res.stream) {
+      // Server-Sent Events, delivered in-process. Each event round-trips through JSON like the real thing.
+      const events = res.stream;
+      return {
+        status: res.status,
+        stream: (async function* () { try { for await (const ev of events) yield JSON.parse(JSON.stringify(ev)); } finally { persist(); } })(),
+      };
+    }
+    persist();
+    // Round-trip through JSON like a real response, so the UI never shares objects with the "server".
+    return { status: res.status, body: res.body == null ? null : JSON.parse(JSON.stringify(res.body)) };
+  },
+  /** Start over with a fresh demo database. */
+  reset() {
+    [DB_KEY, SID_KEY, MAIL_KEY].forEach(k => { try { localStorage.removeItem(k); } catch { /* ignore */ } });
+    location.reload();
+  },
+};
