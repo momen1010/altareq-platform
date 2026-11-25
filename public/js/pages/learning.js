@@ -24,6 +24,21 @@ function weekChart(week) {
 
 const heatLevel = m => (!m ? '' : m < 15 ? 'h1' : m < 30 ? 'h2' : m < 50 ? 'h3' : 'h4');
 
+
+const BADGES = [
+  { k: 'first', en: 'First steps', ar: 'الخطوة الأولى', de: 'Solve your first exercise', da: 'حل أول تمرين', ok: (x) => x.solved >= 1, icon: 'spark' },
+  { k: 's10', en: 'Sharp mind', ar: 'عقل متقد', de: 'Solve 10 exercises', da: 'حل ١٠ تمارين', ok: (x) => x.solved >= 10, icon: 'spark' },
+  { k: 's50', en: 'Practice master', ar: 'سيد التدريب', de: 'Solve 50 exercises', da: 'حل ٥٠ تمرينًا', ok: (x) => x.solved >= 50, icon: 'spark' },
+  { k: 'l3', en: 'Level 3', ar: 'المستوى ٣', de: 'Reach level 3', da: 'اصل إلى المستوى ٣', ok: (x) => x.level >= 3, icon: 'spark' },
+  { k: 'l5', en: 'Level 5', ar: 'المستوى ٥', de: 'Reach level 5', da: 'اصل إلى المستوى ٥', ok: (x) => x.level >= 5, icon: 'spark' },
+  { k: 'str3', en: 'On fire', ar: 'متوهج', de: '3-day streak', da: 'ثلاثة أيام متتالية', ok: (x, st) => (st.streak || 0) >= 3, icon: 'flame' },
+  { k: 'str7', en: 'Unstoppable', ar: 'لا يُوقف', de: '7-day streak', da: 'سبعة أيام متتالية', ok: (x, st) => (st.streak || 0) >= 7, icon: 'flame' },
+];
+function badgesHtml(xp, stats) {
+  const got = BADGES.filter(b => b.ok(xp, stats || {})).length;
+  return `<section class="achs"><div class="eyebrow">${store.lang === 'ar' ? 'الإنجازات' : 'Achievements'} · ${fmt(got)}/${fmt(BADGES.length)}</div><div class="ach-row">${BADGES.map(b => { const on = b.ok(xp, stats || {}); return `<div class="ach ${on ? 'on' : ''}" title="${esc(L({ en: b.de, ar: b.da }))}"><span class="ach-i">${ic(b.icon)}</span><b>${esc(L(b))}</b><small>${esc(L({ en: b.de, ar: b.da }))}</small></div>`; }).join('')}</div></section>`;
+}
+
 export async function learningPage() {
   if (!requireUser()) return;
   loading();
@@ -40,6 +55,7 @@ export async function learningPage() {
     <div class="xp-info"><div class="eyebrow">${t('xp_level')} ${fmt(xp.level)}</div><b class="tnum">${fmt(xp.xp)} XP</b><div class="bar"><i style="width:${Math.round(100 * xp.levelXp / xp.levelNeed)}%"></i></div><small class="muted">${t('xp_next', { n: fmt(xp.levelNeed - xp.levelXp) })}</small></div>
     <div class="xp-goal"><div class="eyebrow">${t('goal_today')}</div><b class="tnum">${fmt(Math.min(xp.goal.today, xp.goal.target))}/${fmt(xp.goal.target)} XP</b><div class="bar"><i style="width:${Math.min(100, Math.round(100 * xp.goal.today / xp.goal.target))}%"></i></div><small class="muted">${xp.goal.today >= xp.goal.target ? t('goal_met') : t('goal_left')}</small></div>
     <a class="xp-review ${rv.dueCount ? 'due' : ''}" href="/review">${ic('spark')}<div><b>${fmt(rv.dueCount)}</b><span>${t('review_due')}</span></div></a></div>` : ''}
+  ${xp ? badgesHtml(xp, d.stats) : ''}
   <div class="tiles">
     <div class="tile"><span class="ti hot">${ic('flame')}</span><div><b>${fmt(d.stats.streak)}</b><span>${t('streak')}</span></div></div>
     <div class="tile"><span class="ti">${ic('clock')}</span><div><b>${fmt(d.stats.weekMinutes)}</b><span>${t('week_min')}</span></div></div>
