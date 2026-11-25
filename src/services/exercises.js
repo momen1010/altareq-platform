@@ -140,6 +140,17 @@ export function exercisesService({ db, catalog, now = () => new Date() }) {
       return { correct, explanation: row.explanation, ...(correct ? {} : { reveal }), progress: { solved, total } };
     },
 
+    /** Editable form of a lesson's exercises: the same shape replaceForLesson accepts. */
+    sourceForLesson(lessonId) {
+      return db.all('SELECT * FROM exercises WHERE lesson_id = ? ORDER BY position, id', lessonId).map(r => {
+        const d = JSON.parse(r.data_json);
+        const base = { type: r.type, prompt: r.prompt };
+        const extra = r.type === 'mcq' ? { options: d.options, answer: d.answer } : r.type === 'tf' ? { answer: d.answer }
+          : r.type === 'fill' ? { accept: d.accept } : r.type === 'order' ? { answers: d.answers } : { pairs: d.pairs };
+        return { ...base, ...extra, explanation: r.explanation || '' };
+      });
+    },
+
     /** Replace a lesson's exercises (studio and seed). Validates everything before writing anything. */
     replaceForLesson(lessonId, list) {
       if (!Array.isArray(list) || list.length > 40) throw badRequest('A lesson can have up to 40 exercises.');

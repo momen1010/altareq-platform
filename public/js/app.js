@@ -23,6 +23,7 @@ import { vocabPage } from './pages/vocab.js';
 import { placementPage } from './pages/placement.js';
 import { reviewPage } from './pages/review.js';
 import { communityPage } from './studio-community.js';
+import { practiceEditorPage } from './studio-practice.js';
 
 route(/^\/$/, homePage, { nav: 'home' });
 route(/^\/explore$/, explorePage, { nav: 'explore' });
@@ -48,6 +49,7 @@ route(/^\/studio$/, studioPage, { nav: 'teach' });
 route(/^\/studio\/earnings$/, earningsPage, { nav: 'teach' });
 route(/^\/studio\/courses\/(\d+)$/, editorPage, { nav: 'teach' });
 route(/^\/studio\/courses\/(\d+)\/community$/, communityPage, { nav: 'teach' });
+route(/^\/studio\/courses\/(\d+)\/practice$/, practiceEditorPage, { nav: 'teach' });
 route(/^\/notifications$/, notificationsPage, { nav: 'alerts' });
 route(/^\/n\/(\d+)$/, notificationLinkPage);
 route(/^\/mentor\/unsubscribe$/, unsubscribePage);

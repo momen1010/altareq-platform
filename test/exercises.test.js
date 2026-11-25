@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { makeApp, learner, newLearner } from './helpers.js';
+import { makeApp, learner, newLearner, admin } from './helpers.js';
 import { normalizeArabic } from '../src/lib/arabic.js';
 import { validateExercise } from '../src/services/exercises.js';
 
@@ -129,4 +129,31 @@ test('placement test grades, picks a level and recommends courses', async () => 
   assert.equal(perfect.body.score, 12);
   assert.equal(perfect.body.level, 'adv');
   assert.equal((await t.req('POST', '/api/placement', { body: { answers: [1, 2] } })).status, 400);
+});
+
+test('instructors can read and replace a lesson\'s exercises; learners cannot', async () => {
+  const t = makeApp();
+  const lid = lessonOf(t, 'nahw-foundations', 1);
+  const boss = await admin(t);
+  const me = await learner(t);
+  assert.equal((await t.req('GET', `/api/studio/lessons/${lid}/exercises`, { as: me })).status, 403);
+  assert.equal((await t.req('PUT', `/api/studio/lessons/${lid}/exercises`, { as: me, body: { exercises: [] } })).status, 403);
+
+  const src = await t.req('GET', `/api/studio/lessons/${lid}/exercises`, { as: boss });
+  assert.equal(src.status, 200);
+  assert.ok(src.body.exercises.length >= 4);
+  // Round trip: what we read is valid to save as is.
+  const same = await t.req('PUT', `/api/studio/lessons/${lid}/exercises`, { as: boss, body: { exercises: src.body.exercises } });
+  assert.equal(same.status, 200);
+  assert.equal(same.body.saved, src.body.exercises.length);
+
+  const bad = await t.req('PUT', `/api/studio/lessons/${lid}/exercises`, { as: boss, body: { exercises: [{ type: 'mcq', prompt: 'x', options: ['a'], answer: 0 }] } });
+  assert.equal(bad.status, 400);
+  const still = await t.req('GET', `/api/studio/lessons/${lid}/exercises`, { as: boss });
+  assert.equal(still.body.exercises.length, src.body.exercises.length, 'a rejected save changes nothing');
+
+  const one = await t.req('PUT', `/api/studio/lessons/${lid}/exercises`, { as: boss, body: { exercises: [{ type: 'tf', prompt: 'اختبار', answer: true }] } });
+  assert.equal(one.body.saved, 1);
+  const pub = await t.req('GET', `/api/lessons/${lid}/exercises`, { as: me });
+  assert.equal(pub.body.total, 1);
 });

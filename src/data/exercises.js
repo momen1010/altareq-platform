@@ -115,4 +115,69 @@ export const exercises = {
       { type: 'mcq', prompt: 'الصواب في كتابة الكلمة…', options: ['رمى', 'رما'], answer: 0, explanation: 'الأصل ياء: رمى يرمي.' },
     ],
   },
+  'balagha-eloquence': {
+    0: [
+      { type: 'mcq', prompt: 'جملة «العلمُ نافعٌ» جملة…', options: ['خبرية', 'إنشائية'], answer: 0, explanation: 'تحتمل الصدق والكذب، فهي خبر.' },
+      { type: 'mcq', prompt: 'جملة «اجتهدْ في دروسك» جملة…', options: ['خبرية', 'إنشائية'], answer: 1, explanation: 'أمر، والأمر من الإنشاء الطلبي.' },
+      { type: 'tf', prompt: 'الخبر يحتمل الصدق والكذب.', answer: true, explanation: 'هذا هو الفرق بينه وبين الإنشاء.' },
+    ],
+    1: [
+      { type: 'mcq', prompt: 'في «في الدار زيدٌ» تقدّم…', options: ['الخبر على المبتدأ', 'الفاعل على الفعل', 'المفعول على الفاعل'], answer: 0, explanation: 'تقدّم شبه الجملة «في الدار» وهو الخبر.' },
+      { type: 'tf', prompt: 'التقديم والتأخير قد يفيد الاهتمام أو الحصر.', answer: true, explanation: 'مثل: «إياك نعبد».' },
+    ],
+    2: [
+      { type: 'mcq', prompt: 'القصر هو…', options: ['تخصيص أمر بآخر بطريق مخصوص', 'تكرار الحرف', 'حذف الفاعل'], answer: 0, explanation: 'مثل: «ما محمدٌ إلا رسولٌ».' },
+      { type: 'mcq', prompt: 'أداة القصر في «ما نجح إلا المجتهدُ» هي…', options: ['ما وإلا', 'قد', 'لم'], answer: 0, explanation: 'النفي والاستثناء من طرق القصر.' },
+    ],
+    3: [
+      { type: 'mcq', prompt: '«محمدٌ كالأسدِ في الشجاعة»: أداة التشبيه هي…', options: ['الكاف', 'في', 'محمد'], answer: 0, explanation: 'الكاف أداة تشبيه، والأسد مشبّه به.' },
+      { type: 'match', prompt: 'صل كل ركن بمثاله في «العلمُ كالنورِ في الهداية».', pairs: [['المشبه', 'العلم'], ['المشبه به', 'النور'], ['أداة التشبيه', 'الكاف'], ['وجه الشبه', 'الهداية']], explanation: 'للتشبيه أربعة أركان.' },
+    ],
+    4: [
+      { type: 'mcq', prompt: '«رأيتُ أسدًا يخطب في الناس» فيها…', options: ['استعارة', 'جناس', 'طباق'], answer: 0, explanation: 'شبّه الرجل الشجاع بالأسد وحذف المشبه.' },
+      { type: 'tf', prompt: 'الاستعارة تشبيه حُذف أحد طرفيه.', answer: true, explanation: 'ويُترك الآخر مع قرينة.' },
+    ],
+    5: [
+      { type: 'mcq', prompt: '«فلان كثيرُ الرماد» كناية عن…', options: ['الكرم', 'الفقر', 'الغضب'], answer: 0, explanation: 'كثرة الرماد تدل على كثرة الطبخ والضيافة.' },
+      { type: 'tf', prompt: 'في الكناية يجوز إرادة المعنى الحقيقي مع المعنى المراد.', answer: true, explanation: 'وهذا ما يفرّقها عن المجاز.' },
+    ],
+    6: [
+      { type: 'mcq', prompt: 'الجناس هو تشابه لفظين مع…', options: ['اختلاف المعنى', 'اتفاق المعنى', 'اتفاق الوزن فقط'], answer: 0, explanation: 'مثل: «الفتى والفتى».' },
+    ],
+    7: [
+      { type: 'mcq', prompt: 'السجع هو…', options: ['توافق الفواصل في الحرف الأخير', 'ذكر الضدين', 'تشبيه بلا أداة'], answer: 0, explanation: 'مثل: «من جدّ وجد، ومن زرع حصد».' },
+    ],
+    8: [
+      { type: 'mcq', prompt: 'الطباق في «الليلُ والنهارُ» بين…', options: ['الليل والنهار', 'الليل والليل', 'النهار والنهار'], answer: 0, explanation: 'جمع بين لفظين متضادين.' },
+      { type: 'match', prompt: 'صل الكلمة بضدها.', pairs: [['الصدق', 'الكذب'], ['الحياة', 'الموت'], ['الفرح', 'الحزن']], explanation: 'الطباق جمع الضدين.' },
+    ],
+  },
+  'arabic-for-non-natives-beginner': {
+    0: [
+      { type: 'mcq', prompt: 'Which letter is Alif?', options: ['ا', 'ب', 'ت'], answer: 0, explanation: 'Alif is the first letter: ا.' },
+      { type: 'match', prompt: 'Match each letter with its name.', pairs: [['ب', 'Baa'], ['ت', 'Taa'], ['ث', 'Thaa']], explanation: 'They share a shape and differ in the dots.' },
+      { type: 'tf', prompt: 'Arabic is written from right to left.', answer: true, explanation: 'Yes. Start on the right side of the page.' },
+    ],
+    1: [
+      { type: 'mcq', prompt: 'Which letter has one dot above?', options: ['ن', 'ب', 'ي'], answer: 0, explanation: 'Noon ن has one dot above; baa ب has one below.' },
+      { type: 'match', prompt: 'Match each letter with its name.', pairs: [['ج', 'Jeem'], ['ح', 'Haa'], ['خ', 'Khaa']], explanation: 'Same shape, different dots.' },
+    ],
+    2: [
+      { type: 'mcq', prompt: 'The short vowel fatha looks like…', options: ['a small line above the letter', 'a small line below', 'a small loop'], answer: 0, explanation: 'Fatha (a) is above: بَ = ba.' },
+      { type: 'match', prompt: 'Match the mark with its sound.', pairs: [['بَ', 'ba'], ['بِ', 'bi'], ['بُ', 'bu']], explanation: 'Fatha = a, kasra = i, damma = u.' },
+    ],
+    3: [
+      { type: 'mcq', prompt: 'How do you say "peace be upon you"?', options: ['السلام عليكم', 'شكرًا', 'مع السلامة'], answer: 0, explanation: 'The standard Arabic greeting.' },
+      { type: 'match', prompt: 'Match the Arabic with the meaning.', pairs: [['شكرًا', 'Thank you'], ['مرحبًا', 'Hello'], ['مع السلامة', 'Goodbye']], explanation: 'Everyday words to know.' },
+      { type: 'fill', prompt: 'Type "thank you" in Arabic.', accept: ['شكرا', 'شكراً'], explanation: 'شكرًا.' },
+    ],
+    4: [
+      { type: 'match', prompt: 'Match the number.', pairs: [['١', 'one'], ['٢', 'two'], ['٣', 'three']], explanation: 'Arabic-Indic digits.' },
+      { type: 'mcq', prompt: 'What is "واحد"?', options: ['one', 'two', 'ten'], answer: 0, explanation: 'واحد means one.' },
+    ],
+    5: [
+      { type: 'match', prompt: 'Match the family word.', pairs: [['أب', 'father'], ['أم', 'mother'], ['أخ', 'brother'], ['أخت', 'sister']], explanation: 'Core family words.' },
+      { type: 'mcq', prompt: 'What is "أخت"?', options: ['sister', 'mother', 'brother'], answer: 0, explanation: 'أخت means sister.' },
+    ],
+  },
 };
