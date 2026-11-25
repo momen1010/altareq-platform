@@ -65,7 +65,7 @@ export function renderHeader() {
   const nav = current.nav;
   const me = store.me;
   const n = me ? store.cartCount : store.guestCart.length;
-  const items = [['home', '/', t('nav_home')], ['explore', '/explore', t('nav_explore')], ['learning', '/learning', t('nav_learning')], ...(me ? [['review', '/review', t('nav_review')]] : []), ['teach', '/teach', t('nav_teach')]];
+  const items = [['home', '/', t('nav_home')], ['explore', '/explore', t('nav_explore')], ['learning', '/learning', t('nav_learning')], ...(me ? [['review', '/review', t('nav_review')]] : []), ['vocab', '/vocabulary', t('nav_vocab')], ['teach', '/teach', t('nav_teach')]];
   $('#top').innerHTML = `<div class="wrap">
   <a class="logo" href="/" aria-label="${t('brand')}">${LOGO}<span>${t('brand')}</span></a>
   <nav class="nav" aria-label="Main">${items.map(([k, h, l]) => `<a class="nl" href="${h}" ${nav === k ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav>

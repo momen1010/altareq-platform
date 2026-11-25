@@ -3,6 +3,7 @@ import { t, esc, fmt } from './state.js';
 import { get, post } from './api.js';
 import { ic } from './icons.js';
 import { toastErr } from './ui.js';
+import { canSpeak, speak } from './speak.js';
 
 const q = (s, r) => r.querySelector(s);
 const KEYS = [...'ضصثقفغعهخحجد', ...'شسيبلاتنمكط', ...'ئءؤرلاىةوزظ', ...'ًٌٍَُِّْ'];
@@ -27,8 +28,9 @@ export async function renderPractice(el, { lessonId, onProgress }) {
 export function card(ex, i, state, paint) {
   const box = document.createElement('section');
   box.className = `pr-card${ex.solved ? ' solved' : ''}`;
-  box.innerHTML = `<div class="pr-q"><span class="pr-n">${fmt(i + 1)}</span><p dir="auto">${esc(ex.prompt)}</p></div><div class="pr-body"></div>
+  box.innerHTML = `<div class="pr-q"><span class="pr-n">${fmt(i + 1)}</span><p dir="auto">${esc(ex.prompt)}</p>${canSpeak() ? `<button type="button" class="ib pr-say" aria-label="${esc(t('listen'))}" title="${esc(t('listen'))}">${ic('speaker')}</button>` : ''}</div><div class="pr-body"></div>
     <div class="pr-fb" aria-live="polite"></div><div class="pr-act"><button class="btn btn-accent" type="button">${t('pr_check')}</button></div>`;
+  q('.pr-say', box)?.addEventListener('click', () => speak(ex.prompt));
   const body = q('.pr-body', box), fb = q('.pr-fb', box), btn = q('button', box);
   let get_ = () => null;
   const id = `ex${ex.id}`;
