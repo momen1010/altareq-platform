@@ -37,6 +37,9 @@ export const dur = min => { const h = Math.floor(min / 60), m = min % 60; return
 /** Pick the right language from a { en, ar } pair. */
 export const L = pair => (pair ? (store.lang === 'ar' ? pair.ar || pair.en : pair.en) : '');
 export const lvl = k => t('lv_' + k);
+/** One teacher presents everything on the platform: أ. طارق السيد (Tarek El-Sayed in the Latin UI). */
+export const TEACHER = { ar: 'أ. طارق السيد', en: 'Tarek El-Sayed' };
+export const teacher = n => (n === TEACHER.ar || n === TEACHER.en ? (store.lang === 'ar' ? TEACHER.ar : TEACHER.en) : n);
 export const initials = n => String(n || '?').split(/\s+/).map(w => w[0]).join('').slice(0, 2).toUpperCase();
 export const date = (s, opts = { day: 'numeric', month: 'short', year: 'numeric' }) =>
   s ? new Date(String(s).replace(' ', 'T') + (String(s).includes('Z') || String(s).includes('+') ? '' : 'Z')).toLocaleDateString(store.lang === 'ar' ? 'ar-EG' : 'en-GB', opts) : '';

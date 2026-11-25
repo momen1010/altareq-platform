@@ -9,7 +9,7 @@ const PAGES = {
       ['Courses and instructors', 'Instructors own their course content and grant Al Tareq a licence to sell and stream it. Al Tareq may remove courses that break these terms or the law.'],
       ['Payments', 'Prices are shown in Egyptian pounds and include any applicable taxes. Payments are processed by our payment provider; Al Tareq never stores card details.'],
       ['Certificates', 'Certificates confirm that you completed a course on Al Tareq. They are not accredited academic qualifications unless a course says otherwise.'],
-      ['Nour, the AI study mentor', 'Nour is an AI. Its answers come from course material and can still be wrong or incomplete, so check anything important with your instructor. Nour does not give checkpoint quiz answers, and an answer from Nour is never the instructor\'s answer unless the instructor has checked it. Use Nour for studying only, and don\'t try to make it break these rules.'],
+      ['Nour, the AI study mentor', 'Nour is an AI. Its answers come from course material and can still be wrong or incomplete, so check anything important with your instructor. Nour does not give checkpoint quiz answers, and an answer from Nour is never the instructor\'s answer unless the instructor has checked it. Use Nour for studying only, and don\'t try to make it break these rules. Nour's answers are written by Google's Gemini service on its free tier. Each question you send, together with the lesson text it needs, goes to Google, and Google may use content sent on its free tier to improve its products. Do not put personal details such as phone numbers, addresses or passwords in your messages to Nour.'],
       ['Changes', 'We may update these terms. We will tell you by email before changes that affect you take effect.'],
     ],
     ar: [
@@ -17,7 +17,7 @@ const PAGES = {
       ['الدورات والمدرّبون', 'يملك المدرّبون محتوى دوراتهم ويمنحون ال طارق ترخيصًا لبيعه وعرضه. يحق لال طارق حذف الدورات المخالفة لهذه الشروط أو للقانون.'],
       ['الدفع', 'الأسعار بالجنيه المصري وتشمل أي ضرائب مطبّقة. يعالج مزوّد الدفع المدفوعات، ولا يحتفظ ال طارق ببيانات البطاقات.'],
       ['الشهادات', 'تؤكد الشهادات إتمامك لدورة على ال طارق، وليست مؤهلات أكاديمية معتمدة ما لم تذكر الدورة غير ذلك.'],
-      ['نور، المرشدة الدراسية بالذكاء الاصطناعي', 'نور ذكاء اصطناعي. إجاباتها مبنية على مادة الدورة لكنها قد تكون خاطئة أو ناقصة، فراجع أي أمر مهم مع المدرّب. لا تعطي نور إجابات اختبارات التحقق، وإجابتها ليست إجابة المدرّب ما لم يراجعها. استخدم نور للمذاكرة فقط، ولا تحاول دفعها لمخالفة هذه القواعد.'],
+      ['نور، المرشدة الدراسية بالذكاء الاصطناعي', 'نور ذكاء اصطناعي. إجاباتها مبنية على مادة الدورة لكنها قد تكون خاطئة أو ناقصة، فراجع أي أمر مهم مع المدرّب. لا تعطي نور إجابات اختبارات التحقق، وإجابتها ليست إجابة المدرّب ما لم يراجعها. استخدم نور للمذاكرة فقط، ولا تحاول دفعها لمخالفة هذه القواعد. تُكتب إجابات نور بواسطة خدمة Gemini من Google في باقتها المجانية. كل سؤال ترسله، مع نص الدرس اللازم، يُرسل إلى Google، وقد تستخدم Google ما يُرسل عبر الباقة المجانية لتحسين منتجاتها. لا تكتب بيانات شخصية مثل أرقام الهاتف أو العناوين أو كلمات المرور في رسائلك إلى نور.'],
       ['التعديلات', 'قد نحدّث هذه الشروط، وسنبلغك بالبريد قبل سريان أي تغيير يخصك.'],
     ],
   },

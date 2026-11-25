@@ -1,4 +1,4 @@
-import { store, t, esc, money, L } from './state.js';
+import { store, t, esc, money, L, teacher, TEACHER } from './state.js';
 import { ic } from './icons.js';
 import { $, $$, mini } from './ui.js';
 import { navigate } from './router.js';
@@ -31,7 +31,7 @@ function draw(raw) {
   if (store.me && store.me.role !== 'learner') pages.push(['/studio', t('studio'), 'pen'], ['/studio/earnings', t('earnings'), 'coin']);
   if (store.me?.role === 'admin') pages.push(['/admin', t('admin'), 'shield']);
   const pg = pages.filter(p => !q || p[1].toLowerCase().includes(q));
-  const cs = (store.courses || []).filter(c => !q || [c.title.en, c.title.ar, c.instructor.name].some(s => s.toLowerCase().includes(q))).slice(0, 7);
+  const cs = (store.courses || []).filter(c => !q || [c.title.en, c.title.ar, c.instructor.name, TEACHER.ar, TEACHER.en].some(s => s.toLowerCase().includes(q))).slice(0, 7);
   items = [...pg.map(p => p[0]), ...cs.map(c => `/courses/${c.slug}`)];
   sel = 0;
   $('#pall').innerHTML = (pg.length ? `<div class="pal-g">${t('pal_pages')}</div>` + pg.map((p, i) => `<a class="pal-i" data-pi="${i}" href="${p[0]}">${ic(p[2])}<span>${p[1]}</span></a>`).join('') : '')

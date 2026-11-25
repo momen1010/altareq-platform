@@ -1,4 +1,4 @@
-import { store, t, tErr, esc, money, L, fmt, savePrefs } from './state.js';
+import { store, t, tErr, esc, money, L, fmt, savePrefs, teacher } from './state.js';
 import { get, post, put, del } from './api.js';
 import { ic } from './icons.js';
 import { $, toast, toastErr, mini, openModal, closeModal, renderHeader } from './ui.js';
@@ -96,7 +96,7 @@ export async function renderCart() {
     drawer().innerHTML = `${head}<div class="dlist"><div class="empty" style="margin-top:20px">${ic('cart')}<p>${t('cart_empty')}</p><a class="btn btn-brand" href="/explore" data-closecart>${t('cart_browse')}</a></div></div>`;
     return;
   }
-  drawer().innerHTML = `${head}<div class="dlist">${c.items.map(it => `<div class="citem">${mini(it)}<div><b>${esc(L(it.title))}</b><small>${esc(it.instructor.name)}</small><div><button class="linkbtn" data-rm="${it.id}">${t('remove')}</button></div></div><b class="tnum">${money(it.price)}</b></div>`).join('')}</div>
+  drawer().innerHTML = `${head}<div class="dlist">${c.items.map(it => `<div class="citem">${mini(it)}<div><b>${esc(L(it.title))}</b><small>${esc(teacher(it.instructor.name))}</small><div><button class="linkbtn" data-rm="${it.id}">${t('remove')}</button></div></div><b class="tnum">${money(it.price)}</b></div>`).join('')}</div>
   <div class="dfoot">
     ${c.guest ? `<p class="muted" style="font-size:.85rem">${t('signin_coupon')}</p>` : c.coupon
     ? `<div class="coupon-msg ok">${t('coupon_applied', { code: esc(c.coupon.code), n: fmt(c.coupon.percent) })} <button class="linkbtn" data-rmcoupon>${t('coupon_remove')}</button></div>`

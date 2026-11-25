@@ -1,4 +1,4 @@
-import { store, t, tErr, esc, L, date } from '../state.js';
+import { store, t, tErr, esc, L, date, teacher } from '../state.js';
 import { get, post } from '../api.js';
 import { ic, LOGO_CERT } from '../icons.js';
 import { app, $, openModal, toast, toastErr, footer, loading, errorView, bindForm } from '../ui.js';
@@ -7,7 +7,7 @@ import { navigate } from '../router.js';
 const certHTML = c => `<div class="cert" dir="${store.lang === 'ar' ? 'rtl' : 'ltr'}"><div class="seal">AL TAREQ</div><div class="cl">${LOGO_CERT}${t('brand')}</div>
   <div class="ct">${t('cert_of')}</div><p style="margin-top:18px;color:#5B6870">${t('cert_body')}</p><div class="cn" id="certname">${esc(c.name)}</div>
   <p style="color:#5B6870">${t('cert_for')}</p><div class="cc">${esc(L(c.course.title))}</div>
-  <div class="cf"><span>${t('issued')}: ${date(c.issuedAt, { day: 'numeric', month: 'long', year: 'numeric' })}</span><span>${esc(c.instructor.name)}, ${esc(c.instructor.headline)}</span><span>${t('cert_id')}: ${esc(c.code)}</span></div></div>`;
+  <div class="cf"><span>${t('issued')}: ${date(c.issuedAt, { day: 'numeric', month: 'long', year: 'numeric' })}</span><span>${esc(teacher(c.instructor.name))}, ${esc(c.instructor.headline)}</span><span>${t('cert_id')}: ${esc(c.code)}</span></div></div>`;
 
 /** Issue (first time) or show the certificate for a completed course. */
 export async function openCertificate(course) {
@@ -49,7 +49,7 @@ export async function verifyPage(m) {
     app().innerHTML = `<section class="verify-card"><h1 style="font-size:2rem">${t('verify_page')}</h1>
       <div class="notice" style="background:color-mix(in srgb,var(--good) 12%,transparent)">${ic('shield')}<span><b>${t('cert_valid')}</b></span></div>
       ${certHTML(c)}
-      <div class="box"><div class="kv"><span class="muted">${t('cert_issued_to')}</span><b>${esc(c.name)}</b></div><div class="kv"><span class="muted">${t('cert_course')}</span><a href="/courses/${c.course.slug}">${esc(L(c.course.title))}</a></div><div class="kv"><span class="muted">${t('cert_instructor')}</span><span>${esc(c.instructor.name)}</span></div><div class="kv"><span class="muted">${t('issued')}</span><span>${date(c.issuedAt, { day: 'numeric', month: 'long', year: 'numeric' })}</span></div></div>
+      <div class="box"><div class="kv"><span class="muted">${t('cert_issued_to')}</span><b>${esc(c.name)}</b></div><div class="kv"><span class="muted">${t('cert_course')}</span><a href="/courses/${c.course.slug}">${esc(L(c.course.title))}</a></div><div class="kv"><span class="muted">${t('cert_instructor')}</span><span>${esc(teacher(c.instructor.name))}</span></div><div class="kv"><span class="muted">${t('issued')}</span><span>${date(c.issuedAt, { day: 'numeric', month: 'long', year: 'numeric' })}</span></div></div>
       ${form}</section>${footer()}`;
   }
   bindVerify();

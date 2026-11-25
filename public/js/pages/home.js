@@ -1,7 +1,7 @@
 import { challengeStatus } from './challenge.js';
 import { wordOfTheDay } from '../vocab-data.js';
 import { canSpeak, speak } from '../speak.js';
-import { store, t, esc, fmt, money, dur, L, lvl } from '../state.js';
+import { store, t, esc, fmt, money, dur, L, lvl, teacher, TEACHER } from '../state.js';
 import { get, post } from '../api.js';
 import { ic } from '../icons.js';
 import { app, $, $$, card, mini, footer, loading, errorView, toast, renderHeader } from '../ui.js';
@@ -67,8 +67,8 @@ export async function homePage() {
   hq.addEventListener('input', () => {
     const q = hq.value.trim().toLowerCase();
     if (!q) { sg.hidden = true; return; }
-    const r = courses.filter(c => [c.title.en, c.title.ar, c.instructor.name].some(s => s.toLowerCase().includes(q))).slice(0, 5);
-    sg.innerHTML = r.length ? r.map(c => `<a href="/courses/${c.slug}">${mini(c)}<span><b>${esc(L(c.title))}</b><small>${esc(c.instructor.name)}</small></span></a>`).join('') : `<p class="muted" style="padding:8px">${t('pal_empty')}</p>`;
+    const r = courses.filter(c => [c.title.en, c.title.ar, c.instructor.name, TEACHER.ar, TEACHER.en].some(s => s.toLowerCase().includes(q))).slice(0, 5);
+    sg.innerHTML = r.length ? r.map(c => `<a href="/courses/${c.slug}">${mini(c)}<span><b>${esc(L(c.title))}</b><small>${esc(teacher(c.instructor.name))}</small></span></a>`).join('') : `<p class="muted" style="padding:8px">${t('pal_empty')}</p>`;
     sg.hidden = false;
   });
   hq.addEventListener('blur', () => setTimeout(() => { sg.hidden = true; }, 180));

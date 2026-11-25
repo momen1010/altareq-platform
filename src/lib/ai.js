@@ -51,6 +51,8 @@ export function createAi({ config, db, log, fetch = globalThis.fetch, now = () =
     return {
       model: MODELS[kind],
       max_tokens: Math.min(maxTokens || c.maxOutputTokens, c.maxOutputTokens),
+      // Gemini counts hidden thinking against max_tokens, so keep it minimal or short answers come back empty.
+      ...(c.provider === 'gemini' ? { reasoning_effort: 'minimal' } : {}),
       messages: [{ role: 'system', content: system.map(b => b.text).join('\n\n') }, ...messages],
       ...(stream ? { stream: true, stream_options: { include_usage: true } } : {}),
     };
@@ -58,6 +60,7 @@ export function createAi({ config, db, log, fetch = globalThis.fetch, now = () =
 
   /** POST with a timeout and one retry on 429, 5xx or a network error. */
   async function post(body) {
+    body = { ...body };
     for (let attempt = 0; ; attempt++) {
       const ctl = new AbortController();
       const timer = setTimeout(() => ctl.abort(), c.timeoutMs);
@@ -75,6 +78,8 @@ export function createAi({ config, db, log, fetch = globalThis.fetch, now = () =
       }
       clearTimeout(timer);
       if (res.status === 429 || res.status >= 500) {
+        // Free models get busy: the second try goes to the fallback model, if one is set.
+        if (compat && c.modelFallback && attempt === 0 && body.model !== c.modelFallback) { body = { ...body, model: c.modelFallback }; await sleep(c.retryDelayMs); continue; }
         if (attempt === 0) {
           const after = Number(res.headers.get('retry-after'));
           await sleep(Number.isFinite(after) && after > 0 ? Math.min(after * 1000, 10_000) : c.retryDelayMs);

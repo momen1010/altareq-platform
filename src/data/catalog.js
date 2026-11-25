@@ -16,7 +16,7 @@ export const categories = [
 export const courses = [
   {
     slug: "sarf-made-simple", category: "sarf", level: "beg", price: 899, rating: 4.8, learners: 12480,
-    instructor: "Omar Haddad", headline: "مدرس اللغة العربية",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Sarf Made Simple: Roots and Patterns",
     title_ar: "التصريف ببساطة: الجذور والأوزان",
     summary_en: "Understand how Arabic words are built, from the three-letter root to the patterns that carry meaning.",
@@ -54,7 +54,7 @@ export const courses = [
   },
   {
     slug: "balagha-eloquence", category: "balagha", level: "int", price: 1099, rating: 4.7, learners: 5120,
-    instructor: "Karim Fawzy", headline: "مدرس البلاغة العربية",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Arabic Rhetoric: Meanings, Expression and Embellishment",
     title_ar: "البلاغة العربية: المعاني والبيان والبديع",
     summary_en: "Go beyond correct Arabic to beautiful Arabic: the three branches of balagha with texts to analyze.",
@@ -73,7 +73,7 @@ export const courses = [
   },
   {
     slug: "ruqaa-calligraphy", category: "khat", level: "beg", price: 699, rating: 4.8, learners: 7640,
-    instructor: "Laila Mansour", headline: "خطاطة",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Ruqaa Script from Zero",
     title_ar: "خط الرقعة من الصفر",
     summary_en: "Hold the pen correctly, draw every letter, and finish writing neat daily handwriting in Ruqaa.",
@@ -92,7 +92,7 @@ export const courses = [
   },
   {
     slug: "naskh-calligraphy", category: "khat", level: "int", price: 599, rating: 4.6, learners: 3210,
-    instructor: "Youssef Adel", headline: "خطاط",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Naskh Script: Beauty of the Letter",
     title_ar: "خط النسخ: جماليات الحرف",
     summary_en: "Move from Ruqaa to the classic Naskh used in books: proportions, curves and full compositions.",
@@ -111,7 +111,7 @@ export const courses = [
   },
   {
     slug: "imla-without-mistakes", category: "imla", level: "beg", price: 0, rating: 4.7, learners: 10900,
-    instructor: "Nadine Samir", headline: "مدرسة اللغة العربية",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Spelling without Mistakes",
     title_ar: "الإملاء بلا أخطاء",
     summary_en: "Master the hamza, the tied ta and the soft alif with short rules and lots of dictation practice.",
@@ -130,7 +130,7 @@ export const courses = [
   },
   {
     slug: "arabic-conversation-daily-life", category: "nonnative", level: "int", price: 499, rating: 4.5, learners: 4330,
-    instructor: "Hany Rizk", headline: "مدرس العربية لغير الناطقين",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Everyday Arabic Conversation",
     title_ar: "المحادثة العربية اليومية",
     summary_en: "Speak about your day, your family, the market and the doctor with ready dialogues and drills.",
@@ -149,7 +149,7 @@ export const courses = [
   },
   {
     slug: "arabic-for-non-natives-beginner", category: "nonnative", level: "beg", price: 549, rating: 4.8, learners: 15200,
-    instructor: "Sara Wahba", headline: "Arabic teacher for non-native speakers",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Arabic for Non-Native Speakers: Level 1",
     title_ar: "العربية لغير الناطقين: المستوى الأول",
     summary_en: "Letters, sounds and your first sentences: a gentle English-medium start into Arabic.",
@@ -168,7 +168,7 @@ export const courses = [
   },
   {
     slug: "arabic-literature-selections", category: "qira", level: "int", price: 799, rating: 4.7, learners: 3870,
-    instructor: "Ezz Eldin", headline: "مدرس الأدب العربي",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Selections from Arabic Literature",
     title_ar: "مختارات من الأدب العربي",
     summary_en: "Read short masterpieces from classical and modern Arabic literature and learn to appreciate them.",
@@ -187,7 +187,7 @@ export const courses = [
   },
   {
     slug: "reading-fluency", category: "qira", level: "beg", price: 0, rating: 4.6, learners: 6050,
-    instructor: "Mona Galal", headline: "مدرسة اللغة العربية",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Reading Aloud with Fluency",
     title_ar: "القراءة الجهرية بطلاقة",
     summary_en: "Read Arabic texts aloud smoothly: pacing, vowel endings, and confident delivery.",
@@ -206,7 +206,7 @@ export const courses = [
   },
   {
     slug: "nahw-revision-secondary", category: "nahw", level: "beg", price: 349, rating: 4.9, learners: 8420,
-    instructor: "Ahmed Fathy", headline: "مدرس اللغة العربية",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Grammar Revision for Secondary School",
     title_ar: "مراجعة النحو للمرحلة الثانوية",
     summary_en: "A full revision of the secondary-school grammar curriculum with solved exam questions.",
@@ -225,7 +225,7 @@ export const courses = [
   },
   {
     slug: "essay-writing", category: "writing", level: "all", price: 299, rating: 4.7, learners: 5600,
-    instructor: "Dina Ashraf", headline: "مدربة كتابة",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "The Art of Expression and Writing",
     title_ar: "فن التعبير والكتابة",
     summary_en: "Plan, write and polish Arabic essays and messages people actually enjoy reading.",
@@ -244,7 +244,7 @@ export const courses = [
   },
   {
     slug: "arabic-stylistics", category: "writing", level: "adv", price: 999, rating: 4.8, learners: 4200,
-    instructor: "Mostafa Kamel", headline: "باحث في اللغة العربية",
+    instructor: "Tarek", headline: "مدرس اللغة العربية",
     title_en: "Arabic Stylistics: Analysis and Appreciation",
     title_ar: "الأسلوبية العربية: تحليل وتذوّق",
     summary_en: "Analyze style like a scholar: levels of linguistic analysis applied to real Arabic texts.",

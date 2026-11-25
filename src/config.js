@@ -43,9 +43,10 @@ export function loadConfig(env = process.env) {
       // OpenRouter), anthropic (Claude, paid). gemini and openai share one client.
       apiKey: (env.AI_PROVIDER === 'anthropic' ? env.ANTHROPIC_API_KEY : (env.AI_API_KEY || env.GEMINI_API_KEY)) || '',
       baseUrl: (env.AI_BASE_URL || env.ANTHROPIC_BASE_URL || (env.AI_PROVIDER === 'gemini' ? 'https://generativelanguage.googleapis.com/v1beta/openai' : env.AI_PROVIDER === 'openai' ? 'https://api.groq.com/openai/v1' : 'https://api.anthropic.com')).replace(/\/$/, ''),
-      modelChat: env.AI_MODEL_CHAT || (env.AI_PROVIDER === 'gemini' ? 'gemini-3.8-flash' : env.AI_PROVIDER === 'openai' ? 'openai/gpt-oss-120b' : 'claude-sonnet-5-5'),
-      modelFast: env.AI_MODEL_FAST || (env.AI_PROVIDER === 'gemini' ? 'gemini-3.8-flash' : env.AI_PROVIDER === 'openai' ? 'openai/gpt-oss-20b' : 'claude-haiku-4-5-20251001'),
+      modelChat: env.AI_MODEL_CHAT || (env.AI_PROVIDER === 'gemini' ? 'gemini-3.6-flash' : env.AI_PROVIDER === 'openai' ? 'openai/gpt-oss-120b' : 'claude-sonnet-5-5'),
+      modelFast: env.AI_MODEL_FAST || (env.AI_PROVIDER === 'gemini' ? 'gemini-3.6-flash' : env.AI_PROVIDER === 'openai' ? 'openai/gpt-oss-20b' : 'claude-haiku-4-5-20251001'),
       // USD per million tokens [input, output]. Free providers cost nothing, so their default price is 0.
+      modelFallback: env.AI_MODEL_FALLBACK || '',
       globalDailyLimit: num(env.AI_GLOBAL_DAILY_LIMIT, 400),
       priceChat: [num(env.AI_PRICE_CHAT_IN, ['gemini', 'openai'].includes(env.AI_PROVIDER) ? 0 : 2), num(env.AI_PRICE_CHAT_OUT, ['gemini', 'openai'].includes(env.AI_PROVIDER) ? 0 : 10)],
       priceFast: [num(env.AI_PRICE_FAST_IN, ['gemini', 'openai'].includes(env.AI_PROVIDER) ? 0 : 1), num(env.AI_PRICE_FAST_OUT, ['gemini', 'openai'].includes(env.AI_PROVIDER) ? 0 : 5)],
@@ -55,7 +56,7 @@ export function loadConfig(env = process.env) {
       dailyLimit: num(env.AI_DAILY_LIMIT || env.AI_DAILY_LIMIT_FREE, 30),
       monthlyBudgetUsd: num(env.AI_MONTHLY_BUDGET_USD, 50),
       maxInputChars: num(env.AI_MAX_INPUT_CHARS, 1500),
-      maxOutputTokens: num(env.AI_MAX_OUTPUT_TOKENS, 600),
+      maxOutputTokens: num(env.AI_MAX_OUTPUT_TOKENS, 1000),
       perMinute: num(env.AI_RATE_PER_MINUTE, 10),
       experiment: env.AI_EXPERIMENT === 'on',
       search: env.AI_SEARCH === 'keyword' ? 'keyword' : 'auto',

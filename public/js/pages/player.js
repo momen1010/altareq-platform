@@ -1,4 +1,4 @@
-import { store, t, tErr, esc, fmt, L } from '../state.js';
+import { store, t, tErr, esc, fmt, L, teacher } from '../state.js';
 import { get, post, put } from '../api.js';
 import { ic } from '../icons.js';
 import { app, $, $$, loading, errorView, toast, toastErr, requireUser } from '../ui.js';
@@ -92,7 +92,7 @@ async function renderLesson(l, all) {
   <div class="ctrl" id="ctrl"></div>
   <div class="ltitle"><div class="eyebrow">${t('module')} ${fmt(l.si + 1)} · ${esc(L(l.section.title))}</div><h2>${esc(L(l.title))}</h2></div>
   <div class="tabs" role="tablist">${tabs().map(([k, label]) => `<button class="tab" role="tab" aria-selected="${k === 'ov'}" aria-controls="tab-${k}" id="t-${k}" data-tab="${k}">${k === 'nour' ? ic('spark', 'sm') : ''}${label}</button>`).join('')}</div>
-  <div class="tabp" id="tab-ov" role="tabpanel"><p class="muted" style="max-width:65ch">${t('lesson_about')}</p><p style="margin-top:12px" class="muted">${ic('clock', 'sm')} ${fmt(l.minutes)} ${t('min')} · ${t('by')} ${esc(P.course.instructor.name)}</p>
+  <div class="tabp" id="tab-ov" role="tabpanel"><p class="muted" style="max-width:65ch">${t('lesson_about')}</p><p style="margin-top:12px" class="muted">${ic('clock', 'sm')} ${fmt(l.minutes)} ${t('min')} · ${t('by')} ${esc(teacher(P.course.instructor.name))}</p>
     ${next && playable(next) ? `<a class="btn btn-ghost" style="margin-top:16px" href="/learn/${P.course.slug}/lesson/${next.id}">${t('next')}${ic('chev', 'sm flip')}</a>`
     : !next && P.quizCount && !P.previewOnly ? `<a class="btn btn-brand" style="margin-top:16px" href="/learn/${P.course.slug}/quiz">${t('checkpoint')}${ic('chev', 'sm flip')}</a>` : ''}</div>
   <div class="tabp" id="tab-pr" role="tabpanel" hidden></div>

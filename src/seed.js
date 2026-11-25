@@ -6,7 +6,7 @@ import { sqlTime } from './lib/time.js';
 
 export const DEMO_ACCOUNTS = [
   { role: 'learner', email: 'learner@altareq.test', password: 'altareq-learn', name: 'Mariam Lotfy' },
-  { role: 'instructor', email: 'tarek@altareq.test', password: 'altareq-teach', name: 'طارق' },
+  { role: 'instructor', email: 'tarek@altareq.test', password: 'altareq-teach', name: 'أ. طارق السيد' },
   { role: 'admin', email: 'admin@altareq.test', password: 'altareq-admin', name: 'Al Tareq Admin' },
 ];
 

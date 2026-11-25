@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { makeApp, instructor, admin, learner } from './helpers.js';
+import { makeApp, instructor, admin, learner, otherInstructor } from './helpers.js';
 
 const lesson = (title, extra = {}) => ({ title_en: title, minutes: 12, ...extra });
 
@@ -70,7 +70,7 @@ test('a live course cannot be emptied', async () => {
 test('instructors can only edit their own courses; admins can edit any', async () => {
   const t = makeApp();
   const other = t.courseBySlug('naskh-calligraphy');
-  assert.equal((await t.req('GET', `/api/studio/courses/${other.id}`, { as: await instructor(t) })).status, 403);
+  assert.equal((await t.req('GET', `/api/studio/courses/${other.id}`, { as: await otherInstructor(t) })).status, 403);
   assert.equal((await t.req('GET', `/api/studio/courses/${other.id}`, { as: await admin(t) })).status, 200);
   assert.equal((await t.req('GET', '/api/studio/courses', { as: await learner(t) })).status, 403);
 });

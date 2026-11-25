@@ -52,3 +52,9 @@ export async function newLearner(t, email = `l${Math.random().toString(36).slice
 }
 
 export const tick = () => new Promise(r => setTimeout(r, 0));
+
+/** A second instructor with no courses, to check that teachers can't touch each other's work. */
+export const otherInstructor = async t => {
+  t.s.users.create({ email: 'guest-teacher@altareq.test', name: 'Guest Teacher', password: 'altareq-teach', role: 'instructor', verified: true, headline: '' });
+  return t.login('guest-teacher@altareq.test', 'altareq-teach');
+};

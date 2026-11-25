@@ -1,4 +1,4 @@
-import { store, t, tErr, esc, fmt, money, dur, L, lvl, isDark, initials } from './state.js';
+import { store, t, tErr, esc, fmt, money, dur, L, lvl, isDark, initials, teacher } from './state.js';
 import { ic, LOGO } from './icons.js';
 import { current, navigate } from './router.js';
 
@@ -31,7 +31,7 @@ export const priceHTML = c => (c.price === 0 ? `<span class="price free">${t('fr
 export const catName = (key, cats) => L(cats?.find(c => c.key === key)?.name) || key;
 
 export function card(c, cats) {
-  return `<article class="card">${cover(c)}<div class="card-b"><div class="eyebrow">${esc(catName(c.category, cats))}</div><h3><a class="stretch" href="/courses/${c.slug}">${esc(L(c.title))}</a></h3><div class="by">${esc(c.instructor.name)}</div>
+  return `<article class="card">${cover(c)}<div class="card-b"><div class="eyebrow">${esc(catName(c.category, cats))}</div><h3><a class="stretch" href="/courses/${c.slug}">${esc(L(c.title))}</a></h3><div class="by">${esc(teacher(c.instructor.name))}</div>
 <div class="meta"><span class="rate">${ic('star', 'fill')}${fmt(c.rating)}</span><span>${fmt(c.learners)} ${t('students')}</span><span>${dur(c.minutes)}</span></div>
 <div class="pr">${c.enrolled ? `<span class="tag tag-en">${ic('check', 'sm')}${t('enrolled')}</span>` : priceHTML(c)}<button class="wish ${c.wished ? 'on' : ''}" data-wish="${c.id}" aria-pressed="${Boolean(c.wished)}" aria-label="${t('wish_add')}">${ic('heart')}</button></div></div></article>`;
 }

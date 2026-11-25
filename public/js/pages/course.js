@@ -1,4 +1,4 @@
-import { store, t, esc, fmt, money, dur, L, lvl, initials } from '../state.js';
+import { store, t, esc, fmt, money, dur, L, lvl, initials, teacher } from '../state.js';
 import { get } from '../api.js';
 import { ic } from '../icons.js';
 import { app, $, card, cover, footer, loading, errorView } from '../ui.js';
@@ -31,7 +31,7 @@ export async function coursePage(m) {
     ${c.status !== 'published' ? `<span class="st-badge st-${c.status}" style="margin-bottom:10px">${t('st_' + c.status)}</span>` : ''}
     <h1>${esc(L(c.title))}</h1><p class="dlede">${esc(L(c.summary))}</p>
     <div class="dmeta"><span class="rate">${ic('star', 'fill')}<b>${fmt(c.rating)}</b></span><span>${ic('users')}${fmt(c.learners)} ${t('students')}</span><span>${ic('layers')}${lvl(c.level)}</span><span>${ic('clock')}${dur(c.minutes)}</span></div>
-    <div class="dby">${t('by')} <strong>${esc(c.instructor.name)}</strong></div>
+    <div class="dby">${t('by')} <strong>${esc(teacher(c.instructor.name))}</strong></div>
   </div></div></section>
   <section class="wrap dgrid dbody">
     <div class="dmain">
@@ -43,7 +43,7 @@ export async function coursePage(m) {
         <ul>${s.lessons.map(l => `<li>${ic('video', 'sm')}<span>${l.preview && !c.enrolled ? `<a href="/learn/${c.slug}/lesson/${l.id}" style="color:var(--brand);font-weight:700">${esc(L(l.title))}</a> <span class="tag tag-en">${t('preview')}</span>` : esc(L(l.title))}</span><span class="muted tnum">${fmt(l.minutes)} ${t('min')}</span></li>`).join('')}</ul></details>`).join('')}
         ${c.quizCount ? `<div class="acc-quiz">${ic('quiz')}<span>${t('checkpoint')}</span><span class="muted">${fmt(c.quizCount)} ${t('questions_n')}</span></div>` : ''}</div>
       <h2>${t('inst_title')}</h2>
-      <div class="inst"><div class="avatar" style="--h:${c.hue}">${esc(initials(c.instructor.name))}</div><div><strong style="font-size:1.1rem">${esc(c.instructor.name)}</strong><div class="muted">${esc(c.instructor.headline)}</div><div class="imeta"><span>${fmt(c.instructor.courses)} ${t('courses_n')}</span><span>${fmt(c.instructor.learners)} ${t('students')}</span></div></div></div>
+      <div class="inst"><div class="avatar" style="--h:${c.hue}">${esc(initials(teacher(c.instructor.name)))}</div><div><strong style="font-size:1.1rem">${esc(teacher(c.instructor.name))}</strong><div class="muted">${esc(c.instructor.headline)}</div><div class="imeta"><span>${fmt(c.instructor.courses)} ${t('courses_n')}</span><span>${fmt(c.instructor.learners)} ${t('students')}</span></div></div></div>
       ${c.instructor.bio ? `<p class="muted">${esc(c.instructor.bio)}</p>` : ''}
     </div>
     <aside class="buy">${cover(c)}<div class="buy-b">

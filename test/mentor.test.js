@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { makeApp, learner, instructor, admin, newLearner } from './helpers.js';
+import { makeApp, learner, instructor, admin, newLearner, otherInstructor } from './helpers.js';
 import { openDb } from '../src/db.js';
 import { migrate, migrations } from '../src/migrations/index.js';
 import { createServer } from '../src/server.js';
@@ -568,9 +568,9 @@ test('Q&A drafts: draft-only posts nothing publicly; the instructor sends, edits
   assert.ok((await t.req('GET', '/api/notifications', { as: I })).body.items.some(n => n.kind === 'question'));
   const sent = await t.req('POST', `/api/studio/questions/${q.id}/answer`, { as: I, body: { fromDraft: true } });
   assert.equal(sent.body.question.answers[0].kind, 'instructor');
-  assert.equal(sent.body.question.answers[0].author, 'طارق');
+  assert.equal(sent.body.question.answers[0].author, 'أ. طارق السيد');
   assert.equal(t.db.get('SELECT status FROM ai_drafts WHERE question_id = ?', q.id).status, 'sent');
-  assert.ok((await t.req('GET', '/api/notifications', { as: L })).body.items.some(n => n.title.en === 'طارق answered your question'));
+  assert.ok((await t.req('GET', '/api/notifications', { as: L })).body.items.some(n => n.title.en === 'أ. طارق السيد answered your question'));
   assert.ok(t.db.get("SELECT 1 AS x FROM knowledge_chunks WHERE source = 'answer' AND source_id = ?", sent.body.question.answers[0].id), 'approved answers feed the tutor');
 
   const q2 = (await t.req('POST', `/api/courses/${c.id}/questions`, { as: L, body: { lessonId: l.id, title: 'هل خبر كان منصوب دائمًا؟' } })).body.question;
@@ -602,7 +602,7 @@ test('Q&A instant mode: labelled as AI; approve, correct and remove; the learner
   assert.ok((await t.req('GET', '/api/notifications', { as: L })).body.items.some(n => n.title.en === 'Nour (AI) answered your question'));
   assert.ok(!t.db.get("SELECT 1 AS x FROM knowledge_chunks WHERE source = 'answer' AND source_id = ?", a.id), 'unchecked AI answers are not learned from');
   const approved = await t.req('POST', `/api/studio/answers/${a.id}/approve`, { as: I });
-  assert.equal(approved.body.question.answers[0].checkedBy, 'طارق');
+  assert.equal(approved.body.question.answers[0].checkedBy, 'أ. طارق السيد');
   assert.ok(t.db.get("SELECT 1 AS x FROM knowledge_chunks WHERE source = 'answer' AND source_id = ?", a.id));
   const corrected = await t.req('PUT', `/api/studio/answers/${a.id}`, { as: I, body: { body: 'Only when few rows are missing.' } });
   assert.equal(corrected.body.question.answers[0].kind, 'instructor');
@@ -610,9 +610,9 @@ test('Q&A instant mode: labelled as AI; approve, correct and remove; the learner
   const removed = await t.req('DELETE', `/api/studio/answers/${a.id}`, { as: I });
   assert.deepEqual(removed.body.question.answers, []);
   const titles = (await t.req('GET', '/api/notifications', { as: L })).body.items.map(n => n.title.en);
-  assert.ok(titles.includes('طارق checked the answer to your question') && titles.includes('طارق updated the answer to your question'));
+  assert.ok(titles.includes('أ. طارق السيد checked the answer to your question') && titles.includes('أ. طارق السيد updated the answer to your question'));
   // Another instructor can't touch Salma's course.
-  const other = await t.login('omar@altareq.test', 'altareq-teach');
+  const other = await otherInstructor(t);
   assert.equal((await t.req('POST', `/api/studio/answers/${a.id}/approve`, { as: other })).status, 404);
   assert.equal((await t.req('GET', `/api/studio/courses/${c.id}/community`, { as: other })).status, 403);
 });
@@ -804,7 +804,7 @@ test('Gemini free tier: OpenAI-style request, streamed reply, zero cost, out-of-
   assert.equal(calls[0].headers.authorization, 'Bearer test-gemini-key');
   assert.equal(calls[0].body.messages[0].role, 'system');
   assert.match(calls[0].body.messages[0].content, /Arabic language/);
-  assert.equal(calls[0].body.model, 'gemini-3.8-flash');
+  assert.equal(calls[0].body.model, 'gemini-3.6-flash');
   assert.equal(t.db.get('SELECT SUM(cost_usd) AS s FROM ai_usage').s, 0, 'free tier costs nothing');
   const off = await ask(t, L, { courseId: c.id, lessonId: l.id, text: 'write python code' }, 'ar');
   assert.equal(off.done.message.kind, 'not_covered');

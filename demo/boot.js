@@ -7,7 +7,7 @@ import { createApp } from '../server/app.js';
 import { seed } from '../server/seed.js';
 import { createLogger } from '../server/lib/log.js';
 
-const DB_KEY = 'altareq-demo-db-v8', SID_KEY = 'altareq-demo-sid', MAIL_KEY = 'altareq-demo-outbox';
+const DB_KEY = 'altareq-demo-db-v9', SID_KEY = 'altareq-demo-sid', MAIL_KEY = 'altareq-demo-outbox';
 const store = {
   get: k => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* full or blocked: the demo keeps working in memory */ } },
@@ -48,12 +48,20 @@ const ready = (async () => {
     ai: {
       provider: 'demo', apiKey: '', baseUrl: '', modelChat: 'claude-sonnet-5-5', modelFast: 'claude-haiku-4-5-20251001',
       priceChat: [2, 10], priceFast: [1, 5], timeoutMs: 30000, retryDelayMs: 1500, demoDelayMs: 18, historyDays: 90,
-      dailyLimitFree: 15, dailyLimitPlus: 100, monthlyBudgetUsd: 50, maxInputChars: 1500, maxOutputTokens: 600, perMinute: 10,
+      dailyLimit: 30, globalDailyLimit: 400, monthlyBudgetUsd: 50, maxInputChars: 1500, maxOutputTokens: 1000, perMinute: 10,
       experiment: false, search: 'auto',
     },
     coach: { inactiveDays: 3, minGapHours: 48, maxPerWeek: 3, quietStart: 22, quietEnd: 9 },
     supportResources: '',
   };
+  // Real Nour: when the Vercel proxy answers its health check, use Gemini through it (the key stays on the server).
+  // Otherwise Nour stays on the canned demo replies. This also keeps the Firebase copy working from any network.
+  try {
+    const proxy = 'https://altareq-platform.vercel.app/api/ai';
+    const ctl = new AbortController(); setTimeout(() => ctl.abort(), 3500);
+    const h = await fetch(`${proxy}/health`, { signal: ctl.signal }).then(r => r.json());
+    if (h.ok) Object.assign(config.ai, { provider: 'gemini', apiKey: 'proxy', baseUrl: proxy, modelChat: 'gemini-3.6-flash', modelFast: 'gemini-3.6-flash', priceChat: [0, 0], priceFast: [0, 0], timeoutMs: 45000 });
+  } catch { /* stay on the demo provider */ }
   const app = createApp({ db, config, log, provider: demoMailProvider() });
   seed(app.services);
   let timer;

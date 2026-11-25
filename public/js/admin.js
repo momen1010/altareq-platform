@@ -1,4 +1,4 @@
-import { store, t, esc, fmt, money, egp, L, date } from './state.js';
+import { store, t, esc, fmt, money, egp, L, date, teacher } from './state.js';
 import { get, post, patch, put, del } from './api.js';
 import { ic } from './icons.js';
 import { app, $, $$, badge, footer, loading, errorView, requireUser, toast, toastErr, bindForm, okMsg, field } from './ui.js';
@@ -53,7 +53,7 @@ const VIEWS = {
   async courses() {
     const { courses } = await get('/api/admin/courses');
     shell('courses', table([t('course'), t('instructor'), t('status'), '#' + t('price'), '#' + t('learners_n'), t('updated'), ''], courses.map(c => `<tr>
-      <td><a href="/courses/${c.slug}">${esc(L(c.title))}</a></td><td>${esc(c.instructor.name)}</td><td>${badge(c.status)}</td><td class="num">${money(c.price)}</td><td class="num">${fmt(c.learners)}</td><td>${date(c.updatedAt)}</td>
+      <td><a href="/courses/${c.slug}">${esc(L(c.title))}</a></td><td>${esc(teacher(c.instructor.name))}</td><td>${badge(c.status)}</td><td class="num">${money(c.price)}</td><td class="num">${fmt(c.learners)}</td><td>${date(c.updatedAt)}</td>
       <td><div class="actions"><a class="mini-btn" href="/studio/courses/${c.id}">${t('edit')}</a>${c.status === 'archived'
         ? `<button class="mini-btn" data-cs="${c.id}" data-v="draft">${t('restore')}</button>`
         : `<button class="mini-btn danger" data-cs="${c.id}" data-v="archived">${t('archive')}</button>`}</div></td></tr>`)));
@@ -102,7 +102,7 @@ const VIEWS = {
   async payouts() {
     const { payouts } = await get('/api/admin/payouts');
     shell('payouts', payouts.length ? table([t('instructor'), t('date'), t('method'), t('details'), '#' + t('amount'), '#' + t('balance'), t('status'), ''], payouts.map(p => `<tr>
-      <td><b>${esc(p.instructor.name)}</b><br><small class="muted">${esc(p.instructor.email)}</small></td><td>${date(p.requestedAt)}</td><td>${t('m_' + p.method)}</td><td dir="auto">${esc(p.details)}</td>
+      <td><b>${esc(teacher(p.instructor.name))}</b><br><small class="muted">${esc(p.instructor.email)}</small></td><td>${date(p.requestedAt)}</td><td>${t('m_' + p.method)}</td><td dir="auto">${esc(p.details)}</td>
       <td class="num"><b>${egp(p.amount)}</b></td><td class="num">${egp(p.balance.available)}</td><td>${badge(p.status)}${p.note ? `<br><small class="muted">${esc(p.note)}</small>` : ''}</td>
       <td>${p.status === 'requested' ? `<div class="actions"><button class="mini-btn" data-pay="${p.id}" data-a="paid">${ic('check')}${t('mark_paid')}</button><button class="mini-btn danger" data-pay="${p.id}" data-a="rejected">${t('reject')}</button></div>` : ''}</td></tr>`))
       : `<div class="empty"><p>${t('no_payouts')}</p></div>`);
