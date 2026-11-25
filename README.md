@@ -13,7 +13,7 @@ Learners browse a catalog, buy courses through Paymob, watch lessons, keep notes
 
 ## Live
 
-- Demo build (runs fully in the browser, data stays on the visitor's device): https://altareq-learning.web.app/
+- Demo build (runs fully in the browser, data stays on the visitor's device): https://altareq-learning.web.app/ and https://altareq-platform.vercel.app/
 
 ## Features
 
@@ -24,6 +24,9 @@ Learners browse a catalog, buy courses through Paymob, watch lessons, keep notes
 - Progress tracking, learning streak, per-lesson notes
 - Checkpoint quiz per course (pass mark: two thirds) and **public certificate verification**
 - Q&A, announcements, live-session schedule, notifications
+- **Practice**: five exercise types per lesson (multiple choice, true/false, fill-in, word order, matching) with instant feedback and Arabic-aware answer checking (ignores tashkeel and alef/ya/ta marbuta variants), on-screen Arabic keyboard, listen button
+- **XP, levels, daily goal and achievements**; **spaced-repetition review** of missed exercises; **placement test**
+- **Vocabulary flashcards** (5 decks, 50 words, Leitner boxes), word of the day, harakat toggle
 
 **Nour, the AI mentor**
 - Answers only from the course content and names the source lesson
@@ -31,7 +34,7 @@ Learners browse a catalog, buy courses through Paymob, watch lessons, keep notes
 - Daily limits per plan, monthly spend cap, response cache, answer rating and reporting, admin controls
 - Study coach: gentle nudges with quiet hours and weekly caps; optional parent progress reports
 
-**Instructors**: studio for courses, sections, lessons and quizzes with publish checks; earnings ledger (70% share by default); payouts by bank transfer, InstaPay or wallet.
+**Instructors**: studio for courses, sections, lessons and quizzes with publish checks; exercise editor per lesson; earnings ledger (70% share by default); payouts by bank transfer, InstaPay or wallet.
 
 **Admins**: revenue overview, users and roles, course review, orders and refunds, coupons, payout approval, instructor applications, AI oversight.
 

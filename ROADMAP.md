@@ -40,13 +40,13 @@ Goal: a production-ready platform, not a demo, aiming at the level of the best A
 - Replace sample courses with the real first course set; real video (Bunny Stream).
 - Add a service worker and complete PWA icons.
 
-### Phase B: Exercises with instant feedback (3 to 4 weeks)
+### Phase B: Exercises with instant feedback (3 to 4 weeks) — DONE: engine, 5 types, 10 courses seeded, studio editor. Remaining: multi-select, i3rab selection, audio dictation, final exams, attempt limits
 - Migration `007_exercises`: `exercises(id, lesson_id, type, prompt, data_json, explanation)` and `exercise_attempts`.
 - Types: multiple choice, multi-select, fill-in-the-blank, word ordering, matching, true/false, typed answer with Arabic normalization (tashkeel, alef/hamza/ya variants), i3rab selection, audio dictation.
 - Immediate feedback with explanation and retry; XP and per-lesson mastery.
 - Per-course question banks, randomized final exams, attempt limits.
 
-### Phase C: Progress and retention (2 to 3 weeks)
+### Phase C: Progress and retention (2 to 3 weeks) — PARTLY DONE: review queue, XP/daily goal, placement test, vocabulary flashcards. Remaining: streak freeze, per-skill mastery, weak-topic report
 - Review queue with spaced repetition (SM-2 style) over vocabulary and missed exercises.
 - Learner dashboard: weekly goal, streak freeze, per-skill mastery, weak-topic report.
 - Placement test and recommended path; parent reports already exist, extend them.
