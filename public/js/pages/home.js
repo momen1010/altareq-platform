@@ -1,3 +1,4 @@
+import { challengeStatus } from './challenge.js';
 import { wordOfTheDay } from '../vocab-data.js';
 import { canSpeak, speak } from '../speak.js';
 import { store, t, esc, fmt, money, dur, L, lvl } from '../state.js';
@@ -30,6 +31,7 @@ export async function homePage() {
       <p class="lede">${t('hero_sub')}</p>
       <form class="hsearch" id="hsearch" role="search">${ic('search')}<input id="hq" type="search" autocomplete="off" placeholder="${t('hero_search_ph')}" aria-label="${t('hero_search_ph')}"><button class="btn btn-accent" type="submit">${t('hero_btn')}</button><div class="sugg" id="sugg" hidden></div></form>
       ${(() => { const w = wordOfTheDay(); return `<div class="wod"><div><small class="muted">${t('wod')}</small><b class="wod-ar" dir="rtl" lang="ar">${esc(w.ar)}</b><span class="muted">${esc(w.tr)} · ${esc(w.en)}</span></div>${canSpeak() ? `<button class="ib" id="wod-say" aria-label="${t('listen')}">${ic('speaker')}</button>` : ''}</div>`; })()}
+      ${(() => { const c = challengeStatus(); return `<a class="pt-cta" href="/challenge">${ic('flame')}<span>${L({ en: c.done ? `Today's challenge done: ${c.score}/5` : "Today's challenge: 5 quick questions", ar: c.done ? `أنجزت تحدي اليوم: ${fmt(c.score)}/٥` : 'تحدي اليوم: ٥ أسئلة سريعة' })}${c.streak ? ` · ${fmt(c.streak)} ${L({ en: 'day streak', ar: 'يوم متتالٍ' })}` : ''}</span>${ic('chev', 'sm flip')}</a>`; })()}
       <a class="pt-cta" href="/placement">${ic('compass')}<span>${t('pt_cta')}</span>${ic('chev', 'sm flip')}</a>
       <div class="popular"><span>${t('popular')}</span>${['النحو', 'الإملاء', 'خط الرقعة', 'البلاغة', 'القراءة'].map(p => `<a class="pill" href="/explore?q=${encodeURIComponent(p)}" style="text-decoration:none">${p}</a>`).join('')}</div>
     </div>

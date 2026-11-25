@@ -23,6 +23,7 @@ import { vocabPage } from './pages/vocab.js';
 import { placementPage } from './pages/placement.js';
 import { reviewPage } from './pages/review.js';
 import { communityPage } from './studio-community.js';
+import { challengePage } from './pages/challenge.js';
 import { practiceEditorPage } from './studio-practice.js';
 
 route(/^\/$/, homePage, { nav: 'home' });
@@ -33,6 +34,7 @@ route(/^\/learning$/, learningPage, { nav: 'learning' });
 route(/^\/vocabulary$/, vocabPage, { nav: 'vocab' });
 route(/^\/placement$/, placementPage, { nav: 'explore' });
 route(/^\/review$/, reviewPage, { nav: 'review' });
+route(/^\/challenge$/, challengePage, { nav: 'vocab' });
 route(/^\/teach$/, teachPage, { nav: 'teach' });
 route(/^\/login$/, loginPage);
 route(/^\/register$/, registerPage);
