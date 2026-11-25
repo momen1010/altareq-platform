@@ -18,3 +18,8 @@ export function speak(text, { rate = 0.85 } = {}) {
   synth.speak(u);
   return true;
 }
+
+/** Harakat (tashkeel) display preference, kept on this device. */
+export const stripTashkeel = s => String(s || '').replace(/[\u064B-\u0652\u0670\u0640]/g, '');
+export const tashkeelOn = () => { try { return localStorage.getItem('altareq-tashkeel') !== 'off'; } catch { return true; } };
+export const setTashkeel = on => { try { localStorage.setItem('altareq-tashkeel', on ? 'on' : 'off'); } catch { /* private mode */ } };
