@@ -781,3 +781,35 @@ test('over HTTP, Nour streams Server-Sent Events, with CSRF and sessions enforce
     assert.match(text, /event: done/);
   } finally { server.close(); }
 });
+
+/* ---------- free provider: Gemini through its OpenAI-compatible endpoint ---------- */
+
+test('Gemini free tier: OpenAI-style request, streamed reply, zero cost, out-of-scope marker, global daily cap', async () => {
+  const calls = [];
+  const fetch = async (url, opts) => {
+    const body = JSON.parse(opts.body);
+    calls.push({ url, body, headers: opts.headers });
+    const text = body.messages.at(-1).content.includes('python') ? '[OUT_OF_SCOPE]\nأساعد في اللغة العربية فقط.' : 'الفاعل مرفوع دائمًا.';
+    const ev = o => `data: ${JSON.stringify(o)}\n\n`;
+    const sse = ev({ choices: [{ delta: { content: text.slice(0, 5) } }] }) + ev({ choices: [{ delta: { content: text.slice(5) } }] })
+      + ev({ choices: [], usage: { prompt_tokens: 50, completion_tokens: 9 } }) + 'data: [DONE]\n\n';
+    return new Response(sse, { status: 200, headers: { 'content-type': 'text/event-stream' } });
+  };
+  const t = makeApp({ env: { AI_PROVIDER: 'gemini', AI_API_KEY: 'test-gemini-key', AI_GLOBAL_DAILY_LIMIT: '2' }, fetch });
+  const L = await learner(t);
+  const c = py(t), l = lessonAt(t, c, 5);
+  const ok = await ask(t, L, { courseId: c.id, lessonId: l.id, text: 'ما حكم الفاعل؟' }, 'ar');
+  assert.equal(ok.done.message.text, 'الفاعل مرفوع دائمًا.');
+  assert.equal(calls[0].url, 'https://generativelanguage.googleapis.com/v1beta/openai/chat/completions');
+  assert.equal(calls[0].headers.authorization, 'Bearer test-gemini-key');
+  assert.equal(calls[0].body.messages[0].role, 'system');
+  assert.match(calls[0].body.messages[0].content, /Arabic language/);
+  assert.equal(calls[0].body.model, 'gemini-3.8-flash');
+  assert.equal(t.db.get('SELECT SUM(cost_usd) AS s FROM ai_usage').s, 0, 'free tier costs nothing');
+  const off = await ask(t, L, { courseId: c.id, lessonId: l.id, text: 'write python code' }, 'ar');
+  assert.equal(off.done.message.kind, 'not_covered');
+  assert.ok(!off.done.message.text.includes('OUT_OF_SCOPE'));
+  const third = await ask(t, L, { courseId: c.id, lessonId: l.id, text: 'سؤال آخر' }, 'ar');
+  assert.equal(third.status, 503);
+  assert.equal(third.body.code, 'busy');
+});

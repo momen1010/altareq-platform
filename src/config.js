@@ -39,13 +39,16 @@ export function loadConfig(env = process.env) {
     backup: { dir: env.BACKUP_DIR || 'data/backups', keep: Number(env.BACKUP_KEEP) || 14 },
     ai: {
       provider: env.AI_PROVIDER || 'demo',
-      apiKey: env.ANTHROPIC_API_KEY || '',
-      baseUrl: (env.ANTHROPIC_BASE_URL || 'https://api.anthropic.com').replace(/\/$/, ''),
-      modelChat: env.AI_MODEL_CHAT || 'claude-sonnet-5-5',
-      modelFast: env.AI_MODEL_FAST || 'claude-haiku-4-5-20251001',
-      // USD per million tokens [input, output]. Check https://claude.com/pricing before relying on cost figures.
-      priceChat: [num(env.AI_PRICE_CHAT_IN, 2), num(env.AI_PRICE_CHAT_OUT, 10)],
-      priceFast: [num(env.AI_PRICE_FAST_IN, 1), num(env.AI_PRICE_FAST_OUT, 5)],
+      // Providers: demo (canned), gemini (Google AI Studio free tier), openai (any OpenAI-compatible API such as Groq or
+      // OpenRouter), anthropic (Claude, paid). gemini and openai share one client.
+      apiKey: (env.AI_PROVIDER === 'anthropic' ? env.ANTHROPIC_API_KEY : (env.AI_API_KEY || env.GEMINI_API_KEY)) || '',
+      baseUrl: (env.AI_BASE_URL || env.ANTHROPIC_BASE_URL || (env.AI_PROVIDER === 'gemini' ? 'https://generativelanguage.googleapis.com/v1beta/openai' : env.AI_PROVIDER === 'openai' ? 'https://api.groq.com/openai/v1' : 'https://api.anthropic.com')).replace(/\/$/, ''),
+      modelChat: env.AI_MODEL_CHAT || (env.AI_PROVIDER === 'gemini' ? 'gemini-3.8-flash' : env.AI_PROVIDER === 'openai' ? 'openai/gpt-oss-120b' : 'claude-sonnet-5-5'),
+      modelFast: env.AI_MODEL_FAST || (env.AI_PROVIDER === 'gemini' ? 'gemini-3.8-flash' : env.AI_PROVIDER === 'openai' ? 'openai/gpt-oss-20b' : 'claude-haiku-4-5-20251001'),
+      // USD per million tokens [input, output]. Free providers cost nothing, so their default price is 0.
+      globalDailyLimit: num(env.AI_GLOBAL_DAILY_LIMIT, 400),
+      priceChat: [num(env.AI_PRICE_CHAT_IN, ['gemini', 'openai'].includes(env.AI_PROVIDER) ? 0 : 2), num(env.AI_PRICE_CHAT_OUT, ['gemini', 'openai'].includes(env.AI_PROVIDER) ? 0 : 10)],
+      priceFast: [num(env.AI_PRICE_FAST_IN, ['gemini', 'openai'].includes(env.AI_PROVIDER) ? 0 : 1), num(env.AI_PRICE_FAST_OUT, ['gemini', 'openai'].includes(env.AI_PROVIDER) ? 0 : 5)],
       timeoutMs: num(env.AI_TIMEOUT_MS, 30_000),
       retryDelayMs: num(env.AI_RETRY_DELAY_MS, 1500),
       historyDays: num(env.AI_HISTORY_DAYS, 90),
@@ -84,7 +87,8 @@ export function configProblems(config) {
     if (!p.secretKey || !p.publicKey || !p.hmacSecret || !p.integrationIds.length) out.push('Paymob needs PAYMOB_SECRET_KEY, PAYMOB_PUBLIC_KEY, PAYMOB_HMAC_SECRET and PAYMOB_INTEGRATION_IDS.');
   }
   if (!config.baseUrl.startsWith('https://')) out.push('BASE_URL should be your public https:// address.');
-  if (!['demo', 'anthropic'].includes(config.ai.provider)) out.push('AI_PROVIDER must be "demo" or "anthropic".');
+  if (!['demo', 'anthropic', 'gemini', 'openai'].includes(config.ai.provider)) out.push('AI_PROVIDER must be "demo", "gemini", "openai" or "anthropic".');
   if (config.ai.provider === 'anthropic' && !config.ai.apiKey) out.push('AI_PROVIDER=anthropic needs ANTHROPIC_API_KEY.');
+  if (['gemini', 'openai'].includes(config.ai.provider) && !config.ai.apiKey) out.push(`AI_PROVIDER=${config.ai.provider} needs AI_API_KEY (or GEMINI_API_KEY).`);
   return out;
 }

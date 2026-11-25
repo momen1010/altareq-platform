@@ -245,6 +245,8 @@ export function mentorService(s) {
       try { limiter.hit(String(user.id)); } catch { throw new HttpError(429, "You're sending messages quickly. Wait a minute and try again.", { code: 'rate' }); }
       const q = quota(user);
       if (q.remaining <= 0) throw new HttpError(429, "You've used today's messages with Nour.", { code: 'daily_limit', resetAt: q.resetAt, plus: q.plus });
+      // Free providers have fixed request quotas, so cap total Nour messages per day across everyone.
+      if (config.ai.provider !== 'demo' && db.get(`SELECT COUNT(*) AS n FROM ai_messages WHERE role = 'user' AND created_at >= ?`, dayStart()).n >= config.ai.globalDailyLimit) throw new HttpError(503, 'Nour is very busy today. Please come back tomorrow, your lessons all still work.', { code: 'busy' });
       if (ai.overBudget()) throw new HttpError(503, 'Nour is taking a short break this month. Your lessons, notes and reminders all still work.', { code: 'budget' });
 
       const conv = conversation(user.id, courseId, true);

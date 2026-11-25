@@ -1,4 +1,4 @@
-// Claude Messages API client with a demo provider, streaming, prompt caching,
+// AI client: Claude Messages API, OpenAI-compatible APIs (Gemini free tier, Groq, OpenRouter), and a demo provider, streaming, prompt caching,
 // timeouts, one retry, and a usage/cost log. Only the server calls it; the
 // browser never sees the API key. Message text is never written to the logs.
 import { sqlTime } from './time.js';
@@ -44,6 +44,18 @@ export function createAi({ config, db, log, fetch = globalThis.fetch, now = () =
     };
   }
 
+  const compat = c.provider === 'gemini' || c.provider === 'openai';
+
+  /** OpenAI-style chat request (Gemini's free tier, Groq, OpenRouter). The system blocks become one system message. */
+  function compatPayload(kind, { system, messages, maxTokens, stream }) {
+    return {
+      model: MODELS[kind],
+      max_tokens: Math.min(maxTokens || c.maxOutputTokens, c.maxOutputTokens),
+      messages: [{ role: 'system', content: system.map(b => b.text).join('\n\n') }, ...messages],
+      ...(stream ? { stream: true, stream_options: { include_usage: true } } : {}),
+    };
+  }
+
   /** POST with a timeout and one retry on 429, 5xx or a network error. */
   async function post(body) {
     for (let attempt = 0; ; attempt++) {
@@ -51,9 +63,9 @@ export function createAi({ config, db, log, fetch = globalThis.fetch, now = () =
       const timer = setTimeout(() => ctl.abort(), c.timeoutMs);
       let res;
       try {
-        res = await fetch(`${c.baseUrl}/v1/messages`, {
+        res = await fetch(compat ? `${c.baseUrl}/chat/completions` : `${c.baseUrl}/v1/messages`, {
           method: 'POST', signal: ctl.signal,
-          headers: { 'x-api-key': c.apiKey, 'anthropic-version': API_VERSION, 'content-type': 'application/json' },
+          headers: compat ? { authorization: `Bearer ${c.apiKey}`, 'content-type': 'application/json' } : { 'x-api-key': c.apiKey, 'anthropic-version': API_VERSION, 'content-type': 'application/json' },
           body: JSON.stringify(body),
         });
       } catch (err) {
@@ -87,6 +99,11 @@ export function createAi({ config, db, log, fetch = globalThis.fetch, now = () =
     if (u.cache_creation_input_tokens != null) into.cacheWrite = u.cache_creation_input_tokens;
     return into;
   };
+  const fromCompat = (u = {}, into = zero()) => {
+    if (u.prompt_tokens != null) into.input = u.prompt_tokens;
+    if (u.completion_tokens != null) into.output = u.completion_tokens;
+    return into;
+  };
   const demoUsage = (req, text) => ({ input: estimate(req.system.map(b => b.text).join('') + JSON.stringify(req.messages)), output: estimate(text), cacheRead: 0, cacheWrite: 0 });
 
   return {
@@ -114,10 +131,10 @@ export function createAi({ config, db, log, fetch = globalThis.fetch, now = () =
         return { text };
       }
       try {
-        const res = await post(payload(kind, req));
+        const res = await post((compat ? compatPayload : payload)(kind, req));
         const json = await res.json();
-        const text = (json.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
-        record({ userId: req.userId, feature: req.feature, kind, usage: fromApi(json.usage), ms: Date.now() - t0, ok: true });
+        const text = compat ? (json.choices?.[0]?.message?.content || '') : (json.content || []).filter(b => b.type === 'text').map(b => b.text).join('');
+        record({ userId: req.userId, feature: req.feature, kind, usage: compat ? fromCompat(json.usage) : fromApi(json.usage), ms: Date.now() - t0, ok: true });
         return { text };
       } catch (err) {
         record({ userId: req.userId, feature: req.feature, kind, usage: zero(), ms: Date.now() - t0, ok: false, error: err.detail || err.message });
@@ -140,7 +157,7 @@ export function createAi({ config, db, log, fetch = globalThis.fetch, now = () =
       const usage = zero();
       let ok = false, error = null, reader = null;
       try {
-        const res = await post(payload(kind, { ...req, stream: true }));
+        const res = await post((compat ? compatPayload : payload)(kind, { ...req, stream: true }));
         reader = res.body.getReader();
         const dec = new TextDecoder();
         let buf = '';
@@ -153,8 +170,16 @@ export function createAi({ config, db, log, fetch = globalThis.fetch, now = () =
             const block = buf.slice(0, i); buf = buf.slice(i + 2);
             const data = block.split('\n').filter(l => l.startsWith('data:')).map(l => l.slice(5).trim()).join('');
             if (!data) continue;
+            if (data === '[DONE]') continue;
             let ev;
             try { ev = JSON.parse(data); } catch { continue; }
+            if (compat) {
+              if (ev.error) throw Object.assign(new AiUnavailable(), { detail: ev.error.message || 'stream error' });
+              if (ev.usage) fromCompat(ev.usage, usage);
+              const piece = ev.choices?.[0]?.delta?.content;
+              if (piece) yield piece;
+              continue;
+            }
             if (ev.type === 'message_start') fromApi(ev.message?.usage, usage);
             else if (ev.type === 'content_block_delta' && ev.delta?.type === 'text_delta') yield ev.delta.text;
             else if (ev.type === 'message_delta') fromApi(ev.usage, usage);
