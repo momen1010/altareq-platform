@@ -894,3 +894,29 @@ main:has(>footer:last-child){padding-bottom:0}
 a.mini-btn{text-decoration:none;color:inherit}
 /* Learner-written text can be in either language; let each paragraph pick its own direction. */
 .ans p,.qa-h b,.qa>p,.news p,.nt b,.nt small,.draft textarea,.ansf textarea{unicode-bidi:plaintext}
+
+/* ---------- lesson practice (exercises) ---------- */
+.pr-head{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.pr-bar{flex:1;height:8px;border-radius:99px;background:var(--line,#dde4e8);overflow:hidden}
+.pr-bar i{display:block;height:100%;width:0;background:var(--brand,#0E5E6F);transition:width .3s}
+.pr-list{display:grid;gap:14px;max-width:70ch}
+.pr-card{border:1px solid var(--line,#dde4e8);border-radius:14px;padding:16px;background:var(--surface,#fff)}
+.pr-card.solved{border-color:#2e9e6b}
+.pr-q{display:flex;gap:10px;align-items:flex-start;margin-bottom:12px}
+.pr-q p{margin:0;font-weight:600}
+.pr-n{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;background:var(--brand,#0E5E6F);color:#fff;font-size:13px}
+.pr-in{width:100%;padding:10px 12px;border:1px solid var(--line,#c9d3d8);border-radius:10px;font:inherit;font-size:18px}
+.pr-slot,.pr-bank{display:flex;flex-wrap:wrap;gap:8px;min-height:44px;padding:8px;border-radius:10px}
+.pr-slot{border:1px dashed var(--line,#c9d3d8);margin-bottom:10px;align-items:center}
+.chip{padding:8px 14px;border-radius:99px;border:1px solid var(--line,#c9d3d8);background:var(--surface,#fff);font:inherit;font-size:17px;cursor:pointer}
+.chip.on{background:var(--brand,#0E5E6F);color:#fff;border-color:transparent}
+.chip:disabled{opacity:.35;cursor:default}
+.pr-row{display:flex;gap:12px;align-items:center;justify-content:space-between;padding:6px 0;border-radius:8px}
+.pr-row select{flex:1;max-width:60%;padding:8px;border-radius:8px;border:1px solid var(--line,#c9d3d8);font:inherit}
+.pr-row.bad{background:rgba(214,69,69,.1)}
+.pr-fb{margin-top:10px}
+.pr-msg{display:flex;gap:8px;align-items:flex-start;padding:10px 12px;border-radius:10px;font-size:15px}
+.pr-msg.ok{background:rgba(46,158,107,.12)}
+.pr-msg.bad{background:rgba(214,69,69,.1)}
+.pr-msg.warn{background:rgba(230,160,30,.14)}
+.pr-act{margin-top:12px}

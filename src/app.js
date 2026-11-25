@@ -25,6 +25,7 @@ import { liveService } from './services/live.js';
 import { qaService } from './services/qa.js';
 import { reportsService } from './services/reports.js';
 import { aiAdminService } from './services/aiAdmin.js';
+import { exercisesService } from './services/exercises.js';
 import { housekeepingService } from './services/housekeeping.js';
 import authRoutes from './routes/auth.js';
 import catalogRoutes from './routes/catalog.js';
@@ -34,6 +35,7 @@ import studioRoutes from './routes/studio.js';
 import adminRoutes from './routes/admin.js';
 import paymentRoutes from './routes/payments.js';
 import mentorRoutes from './routes/mentor.js';
+import exerciseRoutes from './routes/exercises.js';
 
 const UNSAFE = new Set(['POST', 'PUT', 'PATCH', 'DELETE']);
 const ROLE_OK = {
@@ -76,10 +78,11 @@ export function createApp({ db, config, log, provider, fetch = globalThis.fetch,
   s.qa = qaService(s);
   s.reports = reportsService(s);
   s.aiAdmin = aiAdminService(s);
+  s.exercises = exercisesService(s);
   s.housekeeping = housekeepingService(s);
 
   const router = createRouter();
-  for (const register of [authRoutes, catalogRoutes, cartRoutes, learningRoutes, studioRoutes, adminRoutes, paymentRoutes, mentorRoutes]) register(router, s);
+  for (const register of [authRoutes, catalogRoutes, cartRoutes, learningRoutes, studioRoutes, adminRoutes, paymentRoutes, mentorRoutes, exerciseRoutes]) register(router, s);
 
   const secure = config.baseUrl.startsWith('https://');
   const cookie = (value, maxAge) => `sid=${value}; Path=/; HttpOnly; SameSite=Lax; Max-Age=${maxAge}${secure ? '; Secure' : ''}`;

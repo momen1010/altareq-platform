@@ -6,6 +6,7 @@ import { navigate, onLeave, current } from '../router.js';
 import { mountNour, resetNour } from '../nour.js';
 import { renderQA, renderNews } from '../community.js';
 import { openCertificate } from './certificate.js';
+import { renderPractice } from '../practice.js';
 
 let P = null;   // current player data
 let V = null;   // simulated video state
@@ -18,7 +19,7 @@ const ringHTML = p => {
 const lessons = () => P.sections.flatMap((s, si) => s.lessons.map(l => ({ ...l, si, section: s })));
 const playable = l => !P.previewOnly || l.preview;
 const nourOk = () => Boolean(store.me && store.mentor.available);
-const tabs = () => [['ov', t('overview')], ...(P.previewOnly ? [] : [['nt', t('notes')]]), ...(store.me ? [['qa', t('qa_tab')]] : []),
+const tabs = () => [['ov', t('overview')], ...(P.previewOnly ? [] : [['pr', t('practice')]]), ...(P.previewOnly ? [] : [['nt', t('notes')]]), ...(store.me ? [['qa', t('qa_tab')]] : []),
   ...(P.previewOnly ? [] : [['news', t('news_tab')]]), ...(nourOk() ? [['nour', t('nour_tab')]] : [])];
 
 function outlineHTML(cur) {
@@ -93,6 +94,7 @@ async function renderLesson(l, all) {
   <div class="tabp" id="tab-ov" role="tabpanel"><p class="muted" style="max-width:65ch">${t('lesson_about')}</p><p style="margin-top:12px" class="muted">${ic('clock', 'sm')} ${fmt(l.minutes)} ${t('min')} · ${t('by')} ${esc(P.course.instructor.name)}</p>
     ${next && playable(next) ? `<a class="btn btn-ghost" style="margin-top:16px" href="/learn/${P.course.slug}/lesson/${next.id}">${t('next')}${ic('chev', 'sm flip')}</a>`
     : !next && P.quizCount && !P.previewOnly ? `<a class="btn btn-brand" style="margin-top:16px" href="/learn/${P.course.slug}/quiz">${t('checkpoint')}${ic('chev', 'sm flip')}</a>` : ''}</div>
+  <div class="tabp" id="tab-pr" role="tabpanel" hidden></div>
   <div class="tabp" id="tab-nt" role="tabpanel" hidden><textarea id="notes" placeholder="${t('notes_ph')}" aria-label="${t('notes')}"></textarea><div class="saved" id="nsaved"></div></div>
   <div class="tabp" id="tab-qa" role="tabpanel" hidden></div><div class="tabp" id="tab-news" role="tabpanel" hidden></div><div class="tabp" id="tab-nour" role="tabpanel" hidden></div>
   ${nourOk() ? `<button class="nour-fab" data-gonour aria-label="${t('ask_nour')}">${ic('spark')}<span>${t('ask_nour')}</span></button>` : ''}`;
@@ -100,6 +102,7 @@ async function renderLesson(l, all) {
     if (!$(`#tab-${k}`)) k = 'ov';
     $$('.tab').forEach(x => x.setAttribute('aria-selected', x.dataset.tab === k));
     $$('.tabp').forEach(p => { p.hidden = p.id !== `tab-${k}`; });
+    if (k === 'pr' && !$('#tab-pr').dataset.ready) { $('#tab-pr').dataset.ready = '1'; renderPractice($('#tab-pr'), { lessonId: l.id }); }
     if (k === 'qa') renderQA($('#tab-qa'), { course: P.course, lessonId: l.id, canAsk: !P.previewOnly, prefill: opts.prefill || '' });
     if (k === 'news') renderNews($('#tab-news'), P.course);
     if (k === 'nour') mountNour($('#tab-nour'), { course: P.course, lessonId: l.id, onAsk: text => show('qa', { prefill: text }) });

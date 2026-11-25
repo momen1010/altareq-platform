@@ -7,12 +7,12 @@ import { createApp } from '../server/app.js';
 import { seed } from '../server/seed.js';
 import { createLogger } from '../server/lib/log.js';
 
-const DB_KEY = 'altareq-demo-db-v2', SID_KEY = 'altareq-demo-sid', MAIL_KEY = 'altareq-demo-outbox';
+const DB_KEY = 'altareq-demo-db-v3', SID_KEY = 'altareq-demo-sid', MAIL_KEY = 'altareq-demo-outbox';
 const store = {
   get: k => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* full or blocked: the demo keeps working in memory */ } },
 };
-try { localStorage.removeItem('altareq-demo-db-v1'); } catch { /* blocked */ } // replaced by v2 (lesson notes for Nour)
+try { localStorage.removeItem('altareq-demo-db-v1'); localStorage.removeItem('altareq-demo-db-v2'); } catch { /* blocked */ } // replaced by v2 (lesson notes for Nour)
 const toB64 = bytes => { let s = ''; for (let i = 0; i < bytes.length; i += 0x8000) s += String.fromCharCode(...bytes.subarray(i, i + 0x8000)); return btoa(s); };
 const fromB64 = b64 => Uint8Array.from(atob(b64), c => c.charCodeAt(0));
 

@@ -742,7 +742,7 @@ test('migration 6 upgrades a phase 4 database without losing data', () => {
   db.run("INSERT INTO sections (course_id, position, title_en) VALUES (1, 0, 'S')");
   db.run("INSERT INTO lessons (course_id, section_id, position, title_en) VALUES (1, 1, 0, 'L1')");
   db.run("INSERT INTO enrollments (user_id, course_id) VALUES (1, 1)");
-  assert.deepEqual(migrate(db), [6]);
+  assert.deepEqual(migrate(db), [6, 7]);
   assert.equal(db.get('SELECT name FROM users WHERE id = 1').name, 'Old User');
   assert.equal(db.get('SELECT tz FROM users WHERE id = 1').tz, 'Africa/Cairo');
   assert.equal(db.get('SELECT body FROM lessons WHERE id = 1').body, '');

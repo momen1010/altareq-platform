@@ -1,5 +1,6 @@
 import { categories, courses } from './data/catalog.js';
 import { lessonNotes } from './data/lessons.js';
+import { exercises as exerciseData } from './data/exercises.js';
 import { slugify } from './services/studio.js';
 import { sqlTime } from './lib/time.js';
 
@@ -88,6 +89,15 @@ export function seed(s, { now = () => new Date() } = {}) {
         c.quiz.forEach(([prompt, options, answer], qi) => db.run('INSERT INTO quiz_questions (course_id, position, prompt, options_json, answer) VALUES (?, ?, ?, ?, ?)',
           id, qi, prompt, JSON.stringify(options), answer));
       });
+
+      for (const [slug, byPos] of Object.entries(exerciseData)) {
+        const cid = db.get('SELECT id FROM courses WHERE slug = ?', slug)?.id;
+        if (!cid) continue;
+        for (const [pos, list] of Object.entries(byPos)) {
+          const lesson = db.get('SELECT id FROM lessons WHERE course_id = ? AND position = ?', cid, Number(pos));
+          if (lesson) s.exercises.replaceForLesson(lesson.id, list);
+        }
+      }
 
       db.run("INSERT INTO coupons (code, percent) VALUES ('ALTAREQ20', 20)");
       db.run("INSERT INTO coupons (code, percent, max_uses) VALUES ('LAUNCH50', 50, 100)");

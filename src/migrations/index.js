@@ -4,8 +4,9 @@ import payments from './003_payments.js';
 import video from './004_video.js';
 import payouts from './005_payouts.js';
 import mentor from './006_mentor.js';
+import exercises from './007_exercises.js';
 
-export const migrations = [core, email, payments, video, payouts, mentor];
+export const migrations = [core, email, payments, video, payouts, mentor, exercises];
 
 /**
  * Apply pending migrations in order, each in its own transaction.
