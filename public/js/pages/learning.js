@@ -27,15 +27,19 @@ const heatLevel = m => (!m ? '' : m < 15 ? 'h1' : m < 30 ? 'h2' : m < 50 ? 'h3' 
 export async function learningPage() {
   if (!requireUser()) return;
   loading();
-  let d, cats;
+  let d, cats, xp = null, rv = { dueCount: 0 };
   let live = [];
-  try { [d, { categories: cats }, { sessions: live }] = await Promise.all([get('/api/learning'), get('/api/categories'), get('/api/live').catch(() => ({ sessions: [] }))]); } catch (e) { return errorView(e); }
+  try { [d, { categories: cats }, { sessions: live }] = await Promise.all([get('/api/learning'), get('/api/categories'), get('/api/live').catch(() => ({ sessions: [] }))]); xp = await get('/api/me/xp').catch(() => null); rv = await get('/api/review').catch(() => ({ dueCount: 0 })); } catch (e) { return errorView(e); }
   const active = d.courses.filter(c => c.progress.percent < 100).sort((a, b) => b.progress.percent - a.progress.percent);
   const done = d.courses.filter(c => c.progress.percent === 100);
   const first = store.me.name.split(' ')[0];
 
   app().innerHTML = `<section class="wrap">
   <div class="dash-head"><div><div class="eyebrow">${new Date().toLocaleDateString(store.lang === 'ar' ? 'ar-EG' : 'en-GB', { weekday: 'long', day: 'numeric', month: 'long' })}</div><h1>${t('welcome')}, ${esc(first)}</h1><p class="muted">${t('dash_sub')}</p></div></div>
+  ${xp ? `<div class="xp-hero"><div class="xp-lvl"><svg viewBox="0 0 36 36" aria-hidden="true"><circle cx="18" cy="18" r="15.5" class="rg-bg"/><circle cx="18" cy="18" r="15.5" class="rg-fg" style="stroke-dasharray:${Math.round(97.4 * xp.levelXp / xp.levelNeed)} 97.4"/></svg><b>${fmt(xp.level)}</b></div>
+    <div class="xp-info"><div class="eyebrow">${t('xp_level')} ${fmt(xp.level)}</div><b class="tnum">${fmt(xp.xp)} XP</b><div class="bar"><i style="width:${Math.round(100 * xp.levelXp / xp.levelNeed)}%"></i></div><small class="muted">${t('xp_next', { n: fmt(xp.levelNeed - xp.levelXp) })}</small></div>
+    <div class="xp-goal"><div class="eyebrow">${t('goal_today')}</div><b class="tnum">${fmt(Math.min(xp.goal.today, xp.goal.target))}/${fmt(xp.goal.target)} XP</b><div class="bar"><i style="width:${Math.min(100, Math.round(100 * xp.goal.today / xp.goal.target))}%"></i></div><small class="muted">${xp.goal.today >= xp.goal.target ? t('goal_met') : t('goal_left')}</small></div>
+    <a class="xp-review ${rv.dueCount ? 'due' : ''}" href="/review">${ic('spark')}<div><b>${fmt(rv.dueCount)}</b><span>${t('review_due')}</span></div></a></div>` : ''}
   <div class="tiles">
     <div class="tile"><span class="ti hot">${ic('flame')}</span><div><b>${fmt(d.stats.streak)}</b><span>${t('streak')}</span></div></div>
     <div class="tile"><span class="ti">${ic('clock')}</span><div><b>${fmt(d.stats.weekMinutes)}</b><span>${t('week_min')}</span></div></div>

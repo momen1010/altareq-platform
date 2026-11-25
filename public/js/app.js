@@ -19,6 +19,8 @@ import { studioPage, editorPage, earningsPage } from './studio.js';
 import { adminPage } from './admin.js';
 import { notificationsPage, notificationLinkPage, toggleBell, onNotificationClick } from './notifications.js';
 import { unsubscribePage, parentConfirmPage } from './pages/mentor.js';
+import { placementPage } from './pages/placement.js';
+import { reviewPage } from './pages/review.js';
 import { communityPage } from './studio-community.js';
 
 route(/^\/$/, homePage, { nav: 'home' });
@@ -26,6 +28,8 @@ route(/^\/explore$/, explorePage, { nav: 'explore' });
 route(/^\/courses\/([a-z0-9-]+)$/, coursePage, { nav: 'explore' });
 route(/^\/learn\/([a-z0-9-]+)(?:\/(quiz|lesson\/\d+))?$/, playerPage, { nav: 'learning' });
 route(/^\/learning$/, learningPage, { nav: 'learning' });
+route(/^\/placement$/, placementPage, { nav: 'explore' });
+route(/^\/review$/, reviewPage, { nav: 'review' });
 route(/^\/teach$/, teachPage, { nav: 'teach' });
 route(/^\/login$/, loginPage);
 route(/^\/register$/, registerPage);

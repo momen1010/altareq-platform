@@ -25,6 +25,7 @@ import { liveService } from './services/live.js';
 import { qaService } from './services/qa.js';
 import { reportsService } from './services/reports.js';
 import { aiAdminService } from './services/aiAdmin.js';
+import { placementService } from './services/placement.js';
 import { exercisesService } from './services/exercises.js';
 import { housekeepingService } from './services/housekeeping.js';
 import authRoutes from './routes/auth.js';
@@ -79,6 +80,7 @@ export function createApp({ db, config, log, provider, fetch = globalThis.fetch,
   s.reports = reportsService(s);
   s.aiAdmin = aiAdminService(s);
   s.exercises = exercisesService(s);
+  s.placement = placementService(s);
   s.housekeeping = housekeepingService(s);
 
   const router = createRouter();

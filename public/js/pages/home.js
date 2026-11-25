@@ -27,6 +27,7 @@ export async function homePage() {
       <h1>${t('hero_title')}</h1>
       <p class="lede">${t('hero_sub')}</p>
       <form class="hsearch" id="hsearch" role="search">${ic('search')}<input id="hq" type="search" autocomplete="off" placeholder="${t('hero_search_ph')}" aria-label="${t('hero_search_ph')}"><button class="btn btn-accent" type="submit">${t('hero_btn')}</button><div class="sugg" id="sugg" hidden></div></form>
+      <a class="pt-cta" href="/placement">${ic('compass')}<span>${t('pt_cta')}</span>${ic('chev', 'sm flip')}</a>
       <div class="popular"><span>${t('popular')}</span>${['النحو', 'الإملاء', 'خط الرقعة', 'البلاغة', 'القراءة'].map(p => `<a class="pill" href="/explore?q=${encodeURIComponent(p)}" style="text-decoration:none">${p}</a>`).join('')}</div>
     </div>
     <div class="pathcard">

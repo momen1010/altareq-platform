@@ -87,3 +87,46 @@ test('matching and true/false grading, with bad input refused', async () => {
   assert.equal((await t.req('POST', `/api/exercises/${tf.id}/check`, { as: me, body: {} })).status, 400);
   assert.equal((await t.req('POST', '/api/exercises/999999/check', { as: me, body: { answer: true } })).status, 404);
 });
+
+test('XP, daily goal and spaced review queue', async () => {
+  const t = makeApp();
+  const me = await learner(t);
+  const xp0 = (await t.req('GET', '/api/me/xp', { as: me })).body;
+  assert.ok(xp0.xp > 0 && xp0.level >= 1 && xp0.goal.target === 30);
+
+  // seeded history has misses that are due now
+  const q = (await t.req('GET', '/api/review', { as: me })).body;
+  assert.ok(q.dueCount > 0 && q.exercises.length > 0);
+  assert.ok(!JSON.stringify(q).includes('"accept"'));
+  const first = q.exercises[0];
+  assert.equal(first.box, 0);
+
+  // answering it correctly moves it out of box 0 and removes it from the due list (next review is days away)
+  const lid = t.db.get('SELECT lesson_id FROM exercises WHERE id = ?', first.id).lesson_id;
+  const full = (await t.req('GET', `/api/lessons/${lid}/exercises`, { as: me })).body.exercises.find(e => e.id === first.id);
+  assert.equal(full.id, first.id);
+  const def = JSON.parse(t.db.get('SELECT data_json FROM exercises WHERE id = ?', first.id).data_json);
+  const ans = first.type === 'mcq' ? def.answer : first.type === 'tf' ? def.answer : first.type === 'fill' ? def.accept[0] : first.type === 'order' ? def.answers[0] : def.pairs.map(p => p[1]);
+  const res = await t.req('POST', `/api/exercises/${first.id}/check`, { as: me, body: { answer: ans } });
+  assert.equal(res.body.correct, true);
+  const after = (await t.req('GET', '/api/review', { as: me })).body;
+  assert.ok(!after.exercises.some(e => e.id === first.id));
+  assert.equal(after.dueCount, q.dueCount - 1);
+  assert.equal((await t.req('GET', '/api/review')).status, 401);
+});
+
+test('placement test grades, picks a level and recommends courses', async () => {
+  const t = makeApp();
+  const q = await t.req('GET', '/api/placement');
+  assert.equal(q.status, 200);
+  assert.equal(q.body.questions.length, 12);
+  assert.ok(!JSON.stringify(q.body).includes('answers'));
+  const all0 = await t.req('POST', '/api/placement', { body: { answers: Array(12).fill(0) } });
+  assert.equal(all0.status, 200);
+  assert.ok(['beg', 'int', 'adv'].includes(all0.body.level));
+  assert.ok(all0.body.courses.length > 0 && all0.body.courses.length <= 3);
+  const perfect = await t.req('POST', '/api/placement', { body: { answers: all0.body.answers } });
+  assert.equal(perfect.body.score, 12);
+  assert.equal(perfect.body.level, 'adv');
+  assert.equal((await t.req('POST', '/api/placement', { body: { answers: [1, 2] } })).status, 400);
+});

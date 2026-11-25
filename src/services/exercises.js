@@ -1,5 +1,10 @@
 import { badRequest, notFound, forbidden } from '../lib/errors.js';
 import { normalizeArabic } from '../lib/arabic.js';
+import { sqlTime } from '../lib/time.js';
+
+const DAILY_GOAL = 30;
+const BOX_DAYS = [0, 1, 3, 7, 14, 30];
+const levelFor = xp => { let lvl = 1, need = 100, base = 0; while (xp >= base + need) { base += need; lvl++; need = 100 + (lvl - 1) * 50; } return { level: lvl, levelXp: xp - base, levelNeed: need }; };
 
 export const TYPES = ['mcq', 'tf', 'fill', 'order', 'match'];
 
@@ -50,7 +55,7 @@ export function validateExercise(ex) {
 }
 
 /** Interactive exercises: public view hides answers; checking happens on the server. */
-export function exercisesService({ db, catalog }) {
+export function exercisesService({ db, catalog, now = () => new Date() }) {
   const enrolled = (userId, courseId) => db.get('SELECT 1 AS ok FROM enrollments WHERE user_id = ? AND course_id = ?', userId, courseId);
   const canTeach = (user, course) => user.role === 'admin' || course.instructor_id === user.id;
 
@@ -145,6 +150,51 @@ export function exercisesService({ db, catalog }) {
           lessonId, i, c.type, c.prompt, JSON.stringify(c.data), c.explanation));
       });
       return clean.length;
+    },
+
+
+    /** XP, level and today's goal. XP: 10 per exercise solved, 20 per lesson done, 50 per quiz passed, 100 per certificate. */
+    xp(userId) {
+      const solved = db.get('SELECT COUNT(DISTINCT exercise_id) AS n FROM exercise_attempts WHERE user_id = ? AND correct = 1', userId).n;
+      const lessons = db.get('SELECT COUNT(*) AS n FROM lesson_progress WHERE user_id = ?', userId).n;
+      const quizzes = db.get('SELECT COUNT(*) AS n FROM enrollments WHERE user_id = ? AND quiz_passed = 1', userId).n;
+      const certs = db.get('SELECT COUNT(*) AS n FROM certificates WHERE user_id = ?', userId).n;
+      const total = solved * 10 + lessons * 20 + quizzes * 50 + certs * 100;
+      const level = levelFor(total);
+      const today = sqlTime(now()).slice(0, 10);
+      const exToday = db.get(`SELECT COUNT(*) AS n FROM (SELECT MIN(created_at) AS m FROM exercise_attempts WHERE user_id = ? AND correct = 1 GROUP BY exercise_id)
+        WHERE substr(m, 1, 10) = ?`, userId, today).n;
+      const lessonsToday = db.get('SELECT COUNT(*) AS n FROM lesson_progress WHERE user_id = ? AND substr(completed_at, 1, 10) = ?', userId, today).n;
+      return { xp: total, ...level, goal: { target: DAILY_GOAL, today: Math.min(exToday * 10 + lessonsToday * 20, 9999) }, solved };
+    },
+
+    /**
+     * Spaced review (Leitner boxes). Each exercise the learner has tried sits in a box equal to its current run of
+     * correct answers (0 after a miss). It is due again after BOX_DAYS[box] days. Misses are due immediately.
+     */
+    reviewQueue(user, limit = 10) {
+      const rows = db.all(`SELECT a.exercise_id AS id, e.lesson_id, MAX(a.id) AS last_id FROM exercise_attempts a
+        JOIN exercises e ON e.id = a.exercise_id WHERE a.user_id = ? GROUP BY a.exercise_id`, user.id);
+      const t = now().getTime();
+      const due = [];
+      for (const r of rows) {
+        const hist = db.all('SELECT correct, created_at FROM exercise_attempts WHERE user_id = ? AND exercise_id = ? ORDER BY id DESC LIMIT 6', user.id, r.id);
+        let box = 0;
+        for (const h of hist) { if (h.correct) box++; else break; }
+        const last = Date.parse(hist[0].created_at.replace(' ', 'T') + 'Z');
+        const dueAt = last + BOX_DAYS[Math.min(box, BOX_DAYS.length - 1)] * 86400000;
+        if (dueAt <= t) due.push({ id: r.id, box, overdueMs: t - dueAt });
+      }
+      due.sort((a, b) => a.box - b.box || b.overdueMs - a.overdueMs);
+      const out = [];
+      for (const d of due) {
+        if (out.length >= limit) break;
+        const row = db.get('SELECT e.*, l.course_id FROM exercises e JOIN lessons l ON l.id = e.lesson_id WHERE e.id = ?', d.id);
+        const course = row && catalog.row(row.course_id);
+        if (!row || !course || (!enrolled(user.id, row.course_id) && !canTeach(user, course))) continue;
+        out.push({ ...publicView(row), solved: false, box: d.box, course: { slug: course.slug, title: { en: course.title_en, ar: course.title_ar || course.title_en } } });
+      }
+      return { dueCount: due.length, exercises: out };
     },
 
     /** Per-course practice summary for the learner dashboard. */

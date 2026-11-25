@@ -166,6 +166,17 @@ export function seed(s, { now = () => new Date() } = {}) {
 
       // Nour's knowledge index for every course that has lesson notes, then sample community activity.
       for (const slug of Object.keys(lessonNotes)) s.knowledge.reindexCourse(course(slug).id);
+      // Practice history for the demo learner: some solved, some missed (so Review and XP have content).
+      {
+        const exs = db.all(`SELECT e.id, e.type FROM exercises e JOIN lessons l ON l.id = e.lesson_id
+          WHERE l.course_id = ? AND l.position IN (0, 2, 3, 4) ORDER BY l.position, e.position`, course('nahw-foundations').id);
+        exs.forEach((e, i) => {
+          if (i >= 14) return;
+          const miss = i % 4 === 1 || i % 7 === 3;
+          if (miss) db.run('INSERT INTO exercise_attempts (user_id, exercise_id, correct, answer_json, created_at) VALUES (?, ?, 0, ?, ?)', L.id, e.id, '0', daysAgo(2 + (i % 3), 16));
+          else db.run('INSERT INTO exercise_attempts (user_id, exercise_id, correct, answer_json, created_at) VALUES (?, ?, 1, ?, ?)', L.id, e.id, '0', daysAgo(1 + (i % 5), 15));
+        });
+      }
       seedCommunity(s, { L, salma: acct.instructor, course, daysAgo, now });
     });
   } finally {

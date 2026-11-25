@@ -5,6 +5,7 @@ import { ic } from './icons.js';
 import { toastErr } from './ui.js';
 
 const q = (s, r) => r.querySelector(s);
+const KEYS = [...'ضصثقفغعهخحجد', ...'شسيبلاتنمكط', ...'ئءؤرلاىةوزظ', ...'ًٌٍَُِّْ'];
 
 export async function renderPractice(el, { lessonId, onProgress }) {
   el.innerHTML = `<div class="loading"><div class="spin"></div></div>`;
@@ -23,7 +24,7 @@ export async function renderPractice(el, { lessonId, onProgress }) {
   paint();
 }
 
-function card(ex, i, state, paint) {
+export function card(ex, i, state, paint) {
   const box = document.createElement('section');
   box.className = `pr-card${ex.solved ? ' solved' : ''}`;
   box.innerHTML = `<div class="pr-q"><span class="pr-n">${fmt(i + 1)}</span><p dir="auto">${esc(ex.prompt)}</p></div><div class="pr-body"></div>
@@ -39,7 +40,13 @@ function card(ex, i, state, paint) {
     body.innerHTML = [[true, t('pr_true')], [false, t('pr_false')]].map(([v, l]) => `<label class="opt"><input type="radio" name="${id}" value="${v}">${l}</label>`).join('');
     get_ = () => { const r = q(`input[name="${id}"]:checked`, box); return r ? r.value === 'true' : null; };
   } else if (ex.type === 'fill') {
-    body.innerHTML = `<input class="pr-in" type="text" dir="rtl" lang="ar" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${esc(t('pr_type'))}" placeholder="${esc(t('pr_type'))}">`;
+    body.innerHTML = `<input class="pr-in" type="text" dir="rtl" lang="ar" autocomplete="off" autocapitalize="off" spellcheck="false" aria-label="${esc(t('pr_type'))}" placeholder="${esc(t('pr_type'))}">
+      <details class="kb"><summary>${t('pr_kb')}</summary><div class="kb-grid" dir="rtl">${KEYS.map(k => `<button type="button" class="kbk" data-k="${k}">${k}</button>`).join('')}<button type="button" class="kbk wide" data-k=" ">␣</button><button type="button" class="kbk wide" data-back>⌫</button></div></details>`;
+    body.addEventListener('click', e => {
+      const k = e.target.closest('.kbk'); if (!k) return;
+      const inp = q('input.pr-in', box); inp.focus();
+      if ('back' in k.dataset) inp.value = inp.value.slice(0, -1); else inp.value += k.dataset.k;
+    });
     get_ = () => { const v = q('input', box).value.trim(); return v || null; };
     q('input', box).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); btn.click(); } });
   } else if (ex.type === 'order') {
