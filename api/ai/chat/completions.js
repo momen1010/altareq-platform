@@ -5,7 +5,7 @@ export default async function handler(req, res) {
   if (!cors(req, res)) return res.status(403).json({ error: 'origin' });
   if (req.method === 'OPTIONS') return res.status(204).end();
   if (req.method !== 'POST') return res.status(405).json({ error: 'method' });
-  const key = process.env.GEMINI_API_KEY;
+  const key = (process.env.GEMINI_API_KEY || '').trim();
   if (!key) return res.status(503).json({ error: 'not configured' });
 
   const ip = String(req.headers['x-forwarded-for'] || '').split(',')[0].trim() || 'unknown';
