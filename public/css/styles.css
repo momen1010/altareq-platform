@@ -980,7 +980,7 @@ a.mini-btn{text-decoration:none;color:inherit}
 .vb-deck small{display:block;margin:2px 0 8px}
 .vb-glyph{flex:none;width:54px;height:54px;border-radius:14px;display:grid;place-items:center;background:rgba(14,94,111,.1);color:var(--brand,#0E5E6F);font-size:28px}
 .fc{display:block;width:100%;min-height:280px;padding:32px;border-radius:22px;border:1px solid var(--line,#dde4e8);background:var(--surface,#fff);text-align:center;cursor:pointer;font:inherit;box-shadow:0 6px 24px rgba(14,94,111,.08)}
-.fc.flip{background:linear-gradient(160deg,#fff,rgba(14,94,111,.06))}
+.fc.fc-on{background:linear-gradient(160deg,#fff,rgba(14,94,111,.06))}
 .fc-ar{font-size:54px;line-height:1.6}
 .fc-tr{font-size:18px;color:var(--brand,#0E5E6F);margin-top:8px}
 .fc-en{font-size:28px;font-weight:700;margin:6px 0 12px}

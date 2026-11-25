@@ -80,7 +80,7 @@ document.addEventListener('click', async e => {
   else if ('resend' in d) resendVerification();
   else if ('resetdemo' in d) window.__altareqDemo?.reset();
   else if ('lang' in d) {
-    store.lang = store.lang === 'en' ? 'ar' : 'en';
+    store.lang = store.lang === 'en' ? 'ar' : 'en'; store.langSet = true;
     savePrefs(); applyLang(); resetPlayerCache();
     if (store.me) patch('/api/account', { lang: store.lang }).then(r => { store.me = r.user; }).catch(() => {});
     renderHeader(); render({ keepScroll: true });

@@ -2,7 +2,7 @@
 (function () {
   try {
     var p = JSON.parse(localStorage.getItem('altareq-prefs')) || {};
-    var lang = p.lang || ((navigator.language || '').indexOf('ar') === 0 ? 'ar' : 'en');
+    var lang = p.langSet && p.lang ? p.lang : 'ar';
     document.documentElement.lang = lang;
     document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
     if (p.theme) document.documentElement.setAttribute('data-theme', p.theme);

@@ -7,14 +7,15 @@ try { prefs = JSON.parse(localStorage.getItem(LS)) || {}; } catch { /* private m
 /** App-wide state. `me` comes from /api/me; guestCart holds course ids before sign-in. */
 export const store = {
   me: null, csrf: null, cartCount: 0, config: {}, unread: 0, mentor: { available: true, demo: true },
-  lang: prefs.lang || (navigator.language?.startsWith('ar') ? 'ar' : 'en'),
+  // Arabic is the default; English only when the visitor chose it with the toggle.
+  lang: prefs.langSet && prefs.lang ? prefs.lang : 'ar', langSet: Boolean(prefs.langSet),
   theme: prefs.theme || null,
   guestCart: Array.isArray(prefs.guestCart) ? prefs.guestCart : [],
   courses: null, // cached catalog cards for search and the guest cart
 };
 
 export function savePrefs() {
-  try { localStorage.setItem(LS, JSON.stringify({ lang: store.lang, theme: store.theme, guestCart: store.guestCart })); } catch { /* ignore */ }
+  try { localStorage.setItem(LS, JSON.stringify({ lang: store.lang, langSet: store.langSet, theme: store.theme, guestCart: store.guestCart })); } catch { /* ignore */ }
 }
 
 /** Translate a key, filling {placeholders}. */

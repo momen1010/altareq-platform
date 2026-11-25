@@ -61,10 +61,10 @@ function collect() {
 
 function render() {
   const lessons = course.sections.flatMap(s => s.lessons);
-  app().innerHTML = `<section class="wrap">${head(esc(course.title_en), `<a class="btn btn-ghost" href="/studio/courses/${course.id}">${ic('pen')}${t('edit')}</a>`)}${subnav()}
+  app().innerHTML = `<section class="wrap">${head(esc(L({ en: course.title_en, ar: course.title_ar })), `<a class="btn btn-ghost" href="/studio/courses/${course.id}">${ic('pen')}${t('edit')}</a>`)}${subnav()}
   <div class="box"><h2 style="font-size:1.1rem">${X('Practice exercises', 'تمارين التدريب')}</h2>
   <p class="muted" style="margin:4px 0 10px">${X('Add short interactive questions to a lesson. Learners get instant feedback and earn XP.', 'أضف أسئلة تفاعلية قصيرة للدرس. يحصل المتعلم على تصحيح فوري ويكسب نقاط خبرة.')}</p>
-  <select id="pr-lesson" style="max-width:100%">${lessons.map((l, i) => `<option value="${l.id}" ${l.id === lessonId ? 'selected' : ''}>${i + 1}. ${esc(l.title_en || l.title_ar)}</option>`).join('')}</select></div>
+  <select id="pr-lesson" style="max-width:100%">${lessons.map((l, i) => `<option value="${l.id}" ${l.id === lessonId ? 'selected' : ''}>${i + 1}. ${esc(L({ en: l.title_en || l.title_ar, ar: l.title_ar || l.title_en }))}</option>`).join('')}</select></div>
   <div id="pr-list">${list.map(card).join('') || `<div class="empty"><p>${X('No exercises in this lesson yet.', 'لا توجد تمارين في هذا الدرس بعد.')}</p></div>`}</div>
   <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;align-items:center">
     <select id="pr-type">${Object.entries(TYPE_NAMES()).map(([k, v]) => `<option value="${k}">${v}</option>`).join('')}</select>

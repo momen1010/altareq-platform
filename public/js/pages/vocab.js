@@ -47,7 +47,7 @@ function study(state, deck) {
     const lang = document.documentElement.lang;
     app().innerHTML = `<section class="wrap vb"><a class="back" href="/vocabulary">${ic('back', 'flip')}${t('vocab_back')}</a>
       <div class="pr-head" style="margin:14px 0"><b class="tnum">${fmt(total - queue.length + 1)} / ${fmt(total)}</b><div class="pr-bar" aria-hidden="true"><i style="width:${Math.round(100 * (total - queue.length) / total)}%"></i></div></div>
-      <button class="fc ${flipped ? 'flip' : ''}" id="fc" aria-label="${t('vocab_flip')}"><div class="fc-ar" dir="rtl" lang="ar">${esc(tashkeelOn() ? w.ar : stripTashkeel(w.ar))}</div>
+      <button class="fc ${flipped ? 'fc-on' : ''}" id="fc" aria-label="${t('vocab_flip')}"><div class="fc-ar" dir="rtl" lang="ar">${esc(tashkeelOn() ? w.ar : stripTashkeel(w.ar))}</div>
         ${flipped ? `<div class="fc-back"><div class="fc-tr">${esc(w.tr)}</div><div class="fc-en">${esc(w.en)}</div><div class="fc-ex" dir="rtl" lang="ar">${esc(tashkeelOn() ? w.ex : stripTashkeel(w.ex))}</div></div>` : `<div class="fc-hint muted">${t('vocab_tap')}</div>`}</button>
       <div class="fc-act"><button class="btn btn-ghost" id="fc-tk" aria-pressed="${tashkeelOn()}">${store_lang() === 'ar' ? (tashkeelOn() ? 'إخفاء التشكيل' : 'إظهار التشكيل') : (tashkeelOn() ? 'Hide harakat' : 'Show harakat')}</button>${canSpeak() ? `<button class="btn btn-ghost" id="fc-say">${ic('speaker', 'sm')} ${t('listen')}</button>` : ''}
         ${flipped ? `<button class="btn btn-ghost" id="fc-again">${t('vocab_again')}</button><button class="btn btn-accent" id="fc-know">${t('vocab_know')}</button>` : `<button class="btn btn-brand" id="fc-show">${t('vocab_show')}</button>`}</div></section>`;

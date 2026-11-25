@@ -98,7 +98,7 @@ function materialHTML(k, l) {
 
 function renderEditor() {
   const c = E;
-  app().innerHTML = `<section class="wrap">${head(esc(c.title_en), `<span><a class="btn btn-ghost" href="/studio/courses/${c.id}/practice">${ic('spark')}${L({ en: 'Practice exercises', ar: 'تمارين التدريب' })}</a> <span id="savestate" class="muted">${dirty ? t('unsaved') : ''}</span></span>`)}${subnav()}
+  app().innerHTML = `<section class="wrap">${head(esc(L({ en: c.title_en, ar: c.title_ar || c.title_en })), `<span><a class="btn btn-ghost" href="/studio/courses/${c.id}/practice">${ic('spark')}${L({ en: 'Practice exercises', ar: 'تمارين التدريب' })}</a> <span id="savestate" class="muted">${dirty ? t('unsaved') : ''}</span></span>`)}${subnav()}
   <div class="ed sec">
     <div>
       <div class="box"><h2>${t('basics')}</h2>
