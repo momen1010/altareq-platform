@@ -1,6 +1,7 @@
 import { badRequest, notFound, forbidden } from '../lib/errors.js';
 import { normalizeArabic } from '../lib/arabic.js';
 import { sqlTime } from '../lib/time.js';
+import { lessonContent } from '../data/lesson-content.js';
 
 const DAILY_GOAL = 30;
 const BOX_DAYS = [0, 1, 3, 7, 14, 30];
@@ -138,6 +139,18 @@ export function exercisesService({ db, catalog, now = () => new Date() }) {
         WHERE a.user_id = ? AND a.correct = 1 AND e.lesson_id = ?`, user.id, row.lesson_id).n;
       // Reveal the solution only after a miss, so a correct hit leaks nothing extra and retries stay meaningful.
       return { correct, explanation: row.explanation, ...(correct ? {} : { reveal }), progress: { solved, total } };
+    },
+
+    /** The written lesson. Preview lessons are open to everyone; the rest need enrollment (or teaching the course). */
+    contentForLesson(user, lessonId) {
+      const l = db.get('SELECT id, course_id, position, is_preview FROM lessons WHERE id = ?', lessonId);
+      if (!l) throw notFound("We couldn't find that lesson.");
+      const course = catalog.row(l.course_id);
+      if (!l.is_preview) {
+        if (!user) throw forbidden('Sign in to read this lesson.');
+        if (!enrolled(user.id, l.course_id) && !canTeach(user, course)) throw forbidden('Enroll in this course to read this lesson.');
+      }
+      return { content: lessonContent[course.slug]?.[l.position] || null };
     },
 
     /** Editable form of a lesson's exercises: the same shape replaceForLesson accepts. */

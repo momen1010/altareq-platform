@@ -7,6 +7,7 @@ import { mountNour, resetNour } from '../nour.js';
 import { renderQA, renderNews } from '../community.js';
 import { openCertificate } from './certificate.js';
 import { renderPractice } from '../practice.js';
+import { lessonHTML } from '../lesson-view.js';
 
 let P = null;   // current player data
 let V = null;   // simulated video state
@@ -111,6 +112,13 @@ async function renderLesson(l, all) {
   };
   $$('.tab').forEach(b => b.addEventListener('click', () => show(b.dataset.tab)));
   $('[data-gonour]')?.addEventListener('click', () => show('nour', { scroll: true }));
+  get(`/api/lessons/${l.id}/content`).then(({ content }) => {
+    if (!content || !$('#tab-ov')) return;
+    const box = document.createElement('div');
+    box.innerHTML = lessonHTML(content);
+    $('#tab-ov').prepend(box);
+    $('#tab-ov > p.muted')?.remove();
+  }).catch(() => { /* the written lesson is optional */ });
   const want = current.query.get('tab');
   if (want) show(want === 'notes' ? 'nt' : want, { scroll: true });
 

@@ -157,3 +157,19 @@ test('instructors can read and replace a lesson\'s exercises; learners cannot', 
   const pub = await t.req('GET', `/api/lessons/${lid}/exercises`, { as: me });
   assert.equal(pub.body.total, 1);
 });
+
+test('written lessons: preview lesson is open, others need enrollment', async () => {
+  const t = makeApp();
+  const l0 = lessonOf(t, 'nahw-foundations', 0), l1 = lessonOf(t, 'nahw-foundations', 1), l5 = lessonOf(t, 'nahw-foundations', 5);
+  const guest = await t.req('GET', `/api/lessons/${l0}/content`);
+  assert.equal(guest.status, 200);
+  assert.ok(guest.body.content.sections.length >= 5 && guest.body.content.summary.length);
+  assert.equal((await t.req('GET', `/api/lessons/${l1}/content`)).status, 403);
+  const me = await learner(t);
+  const mine = await t.req('GET', `/api/lessons/${l1}/content`, { as: me });
+  assert.equal(mine.status, 200);
+  assert.ok(mine.body.content.title.includes('الجملة'));
+  assert.equal((await t.req('GET', `/api/lessons/${l5}/content`, { as: me })).body.content, null, 'lessons without written text return null');
+  const stranger = await newLearner(t);
+  assert.equal((await t.req('GET', `/api/lessons/${l1}/content`, { as: stranger })).status, 403);
+});

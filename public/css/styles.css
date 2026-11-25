@@ -1011,3 +1011,24 @@ a.mini-btn{text-decoration:none;color:inherit}
 .ch-streak b{font-size:1.6rem;color:#e8a018}
 .wod-ch{display:inline-flex;align-items:center;gap:8px;margin-top:10px}
 @media(max-width:480px){.ch-opts{grid-template-columns:1fr}}
+
+/* ---------- written lessons ---------- */
+.lv{max-width:760px;font-size:1.08rem;line-height:2}
+.lv h3{font-size:1.3rem;margin:28px 0 8px}
+.lv p{margin:8px 0}
+.lv-goals{padding:16px 20px;border-radius:14px;background:rgba(14,94,111,.08);border:1px solid rgba(14,94,111,.18)}
+.lv-goals ul,.lv-sum ul{margin:6px 0 0;padding-inline-start:22px}
+.lv-ex{list-style:none;margin:12px 0;padding:0;display:grid;gap:8px}
+.lv-ex li{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:baseline;padding:10px 16px;border-radius:12px;background:var(--surface,#fff);border:1px solid var(--line,#dde4e8);border-inline-start:4px solid var(--brand,#0E5E6F)}
+.lv-ar{font-size:1.35rem;font-weight:700}
+.lv-note{color:var(--muted,#5c6f78);font-size:.98rem}
+.lv-tip{padding:10px 16px;border-radius:12px;background:rgba(232,160,24,.14);font-size:1rem}
+.lv-tablewrap{overflow-x:auto;margin:12px 0}
+.lv-table{border-collapse:collapse;width:100%;font-size:1rem;line-height:1.7}
+.lv-table th{background:rgba(14,94,111,.1);text-align:start}
+.lv-table th,.lv-table td{padding:10px 14px;border:1px solid var(--line,#dde4e8)}
+.lv-first{font-weight:700}
+.lv-m{margin:10px 0;padding:12px 16px;border-radius:12px;background:var(--surface,#fff);border:1px solid var(--line,#dde4e8)}
+.lv-wrong{color:#c0392b;margin:0}.lv-right{color:#1f8a5b;margin:0;font-weight:700}.lv-why{margin:6px 0 0;color:var(--muted,#5c6f78);font-size:1rem}
+.lv-sum{padding:16px 20px;border-radius:14px;background:rgba(46,158,107,.1)}
+.lv-rev{margin-top:10px;font-weight:700}
