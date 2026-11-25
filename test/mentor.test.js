@@ -102,7 +102,7 @@ test('the Claude request: stable parts cached, only retrieved chunks sent, first
   assert.equal(call.body.model, 'claude-sonnet-5-5');
   assert.equal(call.body.stream, true);
   assert.deepEqual(call.body.system.map(b => Boolean(b.cache_control)), [true, true, false]);
-  assert.match(call.body.system[2].text, /Egyptian Arabic/);
+  assert.match(call.body.system[2].text, /standard Arabic/);
   assert.match(call.body.system[2].text, /first name is Mariam\./);
   assert.ok(!promptText(call).includes('learner@altareq.test'), 'never the email');
   assert.ok((call.body.messages.at(-1).content.match(/<chunk /g) || []).length <= 5, 'a handful of chunks, not the course');
@@ -288,7 +288,7 @@ test('daily limit, per-minute rate limit and max input length', async () => {
   assert.equal(third.status, 429);
   assert.equal(third.body.code, 'daily_limit');
   assert.ok(third.body.resetAt);
-  assert.equal(third.body.plus, false, 'non-Plus learners see the Plus upsell');
+  assert.equal(third.body.plus, true, 'Nour is free for everyone: no upsell');
 
   const r = makeApp({ env: { AI_RATE_PER_MINUTE: '2' } });
   const L2 = await learner(r);

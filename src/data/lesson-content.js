@@ -2,6 +2,8 @@
 // Shape: { title, minutes, goals[], sections[{ h, p[], examples[{ ar, note }], table?{ head[], rows[][] }, tip? }], mistakes[{ wrong?, right?, why }], summary[], review }
 // Standard Modern Standard Arabic (فصحى) grammar only. Written for review by an Arabic teacher before use with real learners.
 
+import { nahwLessonsB } from './lesson-content-2.js';
+
 export const lessonContent = {
   'nahw-foundations': {
     0: {
@@ -186,3 +188,5 @@ export const lessonContent = {
     },
   },
 };
+
+Object.assign(lessonContent['nahw-foundations'], nahwLessonsB);

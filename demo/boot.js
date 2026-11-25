@@ -7,7 +7,7 @@ import { createApp } from '../server/app.js';
 import { seed } from '../server/seed.js';
 import { createLogger } from '../server/lib/log.js';
 
-const DB_KEY = 'altareq-demo-db-v7', SID_KEY = 'altareq-demo-sid', MAIL_KEY = 'altareq-demo-outbox';
+const DB_KEY = 'altareq-demo-db-v8', SID_KEY = 'altareq-demo-sid', MAIL_KEY = 'altareq-demo-outbox';
 const store = {
   get: k => { try { return localStorage.getItem(k); } catch { return null; } },
   set: (k, v) => { try { localStorage.setItem(k, v); } catch { /* full or blocked: the demo keeps working in memory */ } },

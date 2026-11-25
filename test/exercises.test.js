@@ -160,7 +160,7 @@ test('instructors can read and replace a lesson\'s exercises; learners cannot', 
 
 test('written lessons: preview lesson is open, others need enrollment', async () => {
   const t = makeApp();
-  const l0 = lessonOf(t, 'nahw-foundations', 0), l1 = lessonOf(t, 'nahw-foundations', 1), l5 = lessonOf(t, 'nahw-foundations', 5);
+  const l0 = lessonOf(t, 'nahw-foundations', 0), l1 = lessonOf(t, 'nahw-foundations', 1), l5 = lessonOf(t, 'balagha-eloquence', 5);
   const guest = await t.req('GET', `/api/lessons/${l0}/content`);
   assert.equal(guest.status, 200);
   assert.ok(guest.body.content.sections.length >= 5 && guest.body.content.summary.length);
@@ -169,7 +169,7 @@ test('written lessons: preview lesson is open, others need enrollment', async ()
   const mine = await t.req('GET', `/api/lessons/${l1}/content`, { as: me });
   assert.equal(mine.status, 200);
   assert.ok(mine.body.content.title.includes('الجملة'));
-  assert.equal((await t.req('GET', `/api/lessons/${l5}/content`, { as: me })).body.content, null, 'lessons without written text return null');
+  assert.equal((await t.req('GET', `/api/lessons/${l5}/content`, { as: me })).body.content ?? null, null, 'lessons without written text return no content');
   const stranger = await newLearner(t);
   assert.equal((await t.req('GET', `/api/lessons/${l1}/content`, { as: stranger })).status, 403);
 });

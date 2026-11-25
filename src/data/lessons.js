@@ -1,6 +1,8 @@
 // Lesson notes for the sample courses, in lesson order. Nour, the AI mentor, answers from
 // this text (plus transcripts, files and approved Q&A answers that instructors add later).
-// Plain data with no imports, shared by the server seed and the browser demo.
+// Plain data (imports only other data files), shared by the server seed and the browser demo.
+
+import { lessonContent } from './lesson-content.js';
 
 export const lessonNotes = {
   'nahw-foundations': [
@@ -156,3 +158,14 @@ export const lessonNotes = {
 الأخطاء المتكررة هي خريطتك: إذا أخطأت في المتطرفة ثلاث مرات فارجع إلى درسها. الإملاء مهارة تراكمية، ودفتر الأخطاء هو أسرع طريق لإتقانها.`,
   ],
 };
+
+// Grammar lessons with a full written version: Nour answers from that text, so the notes are
+// generated from it and the two can never disagree.
+const flat = c => [
+  `${c.title}. ${c.goals.join(' ')}`,
+  ...c.sections.map(x => [x.h, ...(x.p || []), ...(x.examples || []).map(e => `${e.ar} ${e.note}`),
+    ...(x.table ? x.table.rows.map(r => r.join(': ')) : []), x.tip || ''].filter(Boolean).join('\n')),
+  ['أخطاء شائعة:', ...c.mistakes.map(m => `${m.wrong ? `الخطأ: ${m.wrong}. ` : ''}${m.right ? `الصواب: ${m.right}. ` : ''}${m.why}`)].join('\n'),
+  ['الخلاصة:', ...c.summary].join('\n'),
+].join('\n\n');
+for (const [pos, c] of Object.entries(lessonContent['nahw-foundations'])) lessonNotes['nahw-foundations'][Number(pos)] = flat(c);
